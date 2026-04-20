@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% load price_filters %}
+
+{% block title %}Hủy Đặt Phòng - Sandy Hotel & Apartment{% endblock %}
+
+{% block extra_css %}
+<style>
+  .cancel-container {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .cancel-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+  }
+
+  .cancel-title {
+    color: #E74C3C;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .booking-details {
+    background: #FFF8DC;
+    border: 1px solid #D4AF37;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: left;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #DDD;
+    font-size: 14px;
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    color: #D4AF37;
+    font-weight: 600;
+  }
+
+  .detail-value {
+    color: #333;
+  }
+
+  .warning {
+    background: #FCF3CD;
+    border: 1px solid #FFEAA7;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 20px 0;
+    color: #856404;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-cancel {
+    background: #E74C3C;
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background: #C0392B;
+    transform: translateY(-2px);
+  }
+
+  .btn-back {
+    background: #DDD;
+    color: #666;
+  }
+
+  .btn-back:hover {
+    background: #CCC;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cancel-container">
+  <div class="cancel-icon">⚠️</div>
+  <div class="cancel-title">Xác Nhận Hủy Đặt Phòng</div>
+
+  <div class="booking-details">
+    <div class="detail-row">
+      <span class="detail-label">Phòng:</span>
+      <span class="detail-value">{{ booking.room.name }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Loại:</span>
+      <span class="detail-value">{{ booking.room.get_room_type_display }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Check-in:</span>
+      <span class="detail-value">{{ booking.check_in|date:"d/m/Y" }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Check-out:</span>
+      <span class="detail-value">{{ booking.check_out|date:"d/m/Y" }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Giá:</span>
+      <span class="detail-value">{{ booking.room.price|format_price }} VND/đêm</span>
+    </div>
+  </div>
+
+  <div class="warning">
+    📌 Bạn sắp hủy đặt phòng này. Hành động này không thể hoàn tác. Vui lòng xác nhận.
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="button-group">
+      <a href="/booking-history/" class="btn btn-back">← Quay Lại</a>
+      <button type="submit" class="btn btn-cancel">Xác Nhận Hủy</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

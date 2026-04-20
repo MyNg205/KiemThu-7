@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Sandy Hotel & Apartment{% endblock %}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #F5EFE0;
+      font-size: 19px;
+    }
+
+    /* Header */
+    .header {
+      background-color: #FFFACD;
+      border-bottom: 2px solid #DDD;
+      padding: 15px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      background: #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+
+    .hotel-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #D4AF37;
+    }
+
+    .right-menu {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-menu a {
+      color: #D4AF37;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    .nav-menu a:hover {
+      color: #E8A652;
+    }
+
+    .user-menu {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .user-icon {
+      cursor: pointer;
+      font-size: 24px;
+      border: 2px solid #E8A652;
+      border-radius: 50%;
+      padding: 6px 10px;
+      background: #fff;
+      transition: box-shadow 0.2s;
+    }
+
+    .user-icon:hover {
+      box-shadow: 0 2px 8px rgba(232, 166, 82, 0.2);
+    }
+
+    .user-menu-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 40px;
+      background: white;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      min-width: 220px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+
+    .user-menu-content form {
+      padding: 10px;
+    }
+
+    .user-menu-content form input {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 6px;
+      border: 1px solid #DDD;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .user-menu-content form button {
+      width: 100%;
+      padding: 6px;
+      background: #E8A652;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .user-menu-content form button:hover {
+      background: #D39441;
+    }
+
+    .user-menu:focus-within .user-menu-content,
+    .user-menu:hover .user-menu-content {
+      display: block;
+    }
+
+    .user-menu-content a,
+    .user-menu-content button {
+      display: block;
+      width: 100%;
+      padding: 12px 20px;
+      text-align: left;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #333;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+
+    .user-menu-content a:hover,
+    .user-menu-content button:hover {
+      background: #FFFACD;
+      color: #E8A652;
+    }
+
+    /* Container */
+    .container {
+      width: 75vw;
+      margin: 0 auto;
+      padding: 30px 20px;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* Footer */
+    .footer {
+      background-color: #FFFACD;
+      border-top: 1px solid #DDD;
+      padding: 30px 40px;
+      margin-top: 40px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-section h3 {
+      color: #D4AF37;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .footer-section p {
+      color: #666;
+      font-size: 12px;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    .footer-section a {
+      color: #D4AF37;
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .alert {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .alert-info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .alert-warning {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    /* Bộ lọc trạng thái đẹp hơn */
+    .filter-select {
+      padding: 7px 28px 7px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #D4AF37;
+      background: #fff url('data:image/svg+xml;utf8,<svg fill="%23D4AF37" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 10px center/18px 18px;
+      font-size: 15px;
+      color: #333;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(212,175,55,0.07);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-left: 8px;
+      min-width: 120px;
+    }
+
+    .filter-select:focus {
+      border-color: #E8A652;
+      box-shadow: 0 2px 12px rgba(232,166,82,0.13);
+    }
+
+    /* Làm nổi bật vùng lọc trạng thái */
+    .filter-bar {
+      background: #fffbe7;
+      border: 1.5px solid #E8A652;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(212,175,55,0.07);
+      padding: 14px 18px 10px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      width: fit-content;
+    }
+
+    /* Đảm bảo label và select cùng hàng */
+    form label[for="status"] {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nav-menu {
+        width: 100%;
+        justify-content: space-around;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-section">
+      <img src="/static/images/sandy_logo.png" alt="Sandy Hotel Logo" style="width: 50px; height: 50px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: white; object-fit: cover;">
+      <div class="hotel-name">Sandy Hotel & Apartment</div>
+    </div>
+     <div class="right-menu">
+       <div class="nav-menu">
+         {% if user.is_staff %}
+           <!-- Menu cho Nhân Viên -->
+           <a href="/staff/">TRANG CHỦ</a>
+           <a href="/staff/bookings/">ĐƠN ĐẶT PHÒNG</a>
+           <a href="/staff/rooms/">PHÒNG - GIÁ</a>
+         {% else %}
+           <!-- Menu cho Khách Hàng -->
+           <a href="/">TRANG CHỦ</a>
+           <a href="/book/">ĐẶT PHÒNG</a>
+         {% endif %}
+       </div>
+       <div class="user-menu" tabindex="0">
+         <div class="user-icon" tabindex="0">👤</div>
+         <div class="user-menu-content">
+           {% if user.is_authenticated %}
+             <a href="/profile/">Thông tin cá nhân</a>
+             {% if not user.is_staff %}
+               <a href="/booking-history/">Lịch sử đặt phòng</a>
+             {% endif %}
+             <form method="post" action="/logout/" style="margin: 0;">
+               {% csrf_token %}
+               <button type="submit">Đăng xuất</button>
+             </form>
+           {% else %}
+             <form method="post" action="/login/">
+               {% csrf_token %}
+               <input type="email" name="username" placeholder="Email" required>
+               <input type="password" name="password" placeholder="Mật khẩu" required>
+               <button type="submit">Đăng nhập</button>
+             </form>
+           {% endif %}
+         </div>
+       </div>
+     </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      <script>
+        // Ẩn popup sau 5 giây
+        setTimeout(function() {
+          var alerts = document.querySelectorAll('.messages .alert');
+          alerts.forEach(function(alert) {
+            alert.style.display = 'none';
+          });
+        }, 5000);
+      </script>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>📍 LIÊN HỆ</h3>
+        <p>24/26 An Thương 30, Đà Nẵng</p>
+        <p>📞 0976543722</p>
+        <p>✉️ info@sandyhotel.vn</p>
+      </div>
+      <div class="footer-section">
+        <h3>⏰ GIỜ LÀM VIỆC</h3>
+        <p>Lễ tiếp 24/7</p>
+        <p>Check-in: 14:00</p>
+        <p>Check-out: 12:00</p>
+      </div>
+      <div class="footer-section">
+        <h3>📱 THEO DÕI CHÚNG TÔI</h3>
+        <p><a href="#">Facebook</a></p>
+        <p><a href="#">Instagram</a></p>
+        <p><a href="#">Zalo</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
