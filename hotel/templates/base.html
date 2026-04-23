@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 {% load static %}
-=======
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,17 +15,14 @@
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #F5EFE0;
-<<<<<<< HEAD
-=======
-      font-size: 19px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     }
 
     /* Header */
     .header {
       background-color: #FFFACD;
       border-bottom: 2px solid #DDD;
-      padding: 15px 40px;
+      padding: 18px 40px;
+      min-height: 86px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -42,14 +36,13 @@
     }
 
     .logo {
-      width: 50px;
-      height: 50px;
+      width: 58px;
+      height: 58px;
       background: #D4AF37;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-<<<<<<< HEAD
       overflow: hidden;
       padding: 4px;
     }
@@ -60,33 +53,31 @@
       object-fit: cover;
       border-radius: 50%;
       display: block;
-=======
-      font-size: 30px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     }
 
     .hotel-name {
-      font-size: 20px;
+      font-size: 24px;
       font-weight: bold;
       color: #D4AF37;
+      line-height: 1.1;
     }
 
     .right-menu {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 36px;
     }
 
     .nav-menu {
       display: flex;
-      gap: 32px;
+      gap: 34px;
     }
 
     .nav-menu a {
       color: #D4AF37;
       text-decoration: none;
       font-weight: 600;
-      font-size: 16px;
+      font-size: 17px;
       transition: color 0.3s;
     }
 
@@ -102,32 +93,22 @@
 
     .user-icon {
       cursor: pointer;
-<<<<<<< HEAD
       border: 2px solid #E8A652;
       border-radius: 50%;
-      width: 44px;
-      height: 44px;
+      width: 50px;
+      height: 50px;
       padding: 5px;
       background: #fff;
       transition: box-shadow 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-=======
-      font-size: 24px;
-      border: 2px solid #E8A652;
-      border-radius: 50%;
-      padding: 6px 10px;
-      background: #fff;
-      transition: box-shadow 0.2s;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     }
 
     .user-icon:hover {
       box-shadow: 0 2px 8px rgba(232, 166, 82, 0.2);
     }
 
-<<<<<<< HEAD
     .user-icon img {
       width: 100%;
       height: 100%;
@@ -135,8 +116,6 @@
       display: block;
     }
 
-=======
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     .user-menu-content {
       display: none;
       position: absolute;
@@ -145,46 +124,11 @@
       background: white;
       border: 1px solid #DDD;
       border-radius: 5px;
-<<<<<<< HEAD
       min-width: 180px;
-=======
-      min-width: 220px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 100;
     }
 
-<<<<<<< HEAD
-=======
-    .user-menu-content form {
-      padding: 10px;
-    }
-
-    .user-menu-content form input {
-      width: 100%;
-      padding: 5px;
-      margin-bottom: 6px;
-      border: 1px solid #DDD;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-
-    .user-menu-content form button {
-      width: 100%;
-      padding: 6px;
-      background: #E8A652;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .user-menu-content form button:hover {
-      background: #D39441;
-    }
-
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     .user-menu:focus-within .user-menu-content,
     .user-menu:hover .user-menu-content {
       display: block;
@@ -212,11 +156,7 @@
 
     /* Container */
     .container {
-<<<<<<< HEAD
       max-width: 1200px;
-=======
-      width: 75vw;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
       margin: 0 auto;
       padding: 30px 20px;
       min-height: calc(100vh - 80px);
@@ -333,11 +273,22 @@
       .header {
         flex-direction: column;
         gap: 15px;
+        padding: 16px 20px;
+        min-height: unset;
       }
 
       .nav-menu {
         width: 100%;
         justify-content: space-around;
+      }
+
+      .hotel-name {
+        font-size: 20px;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
       }
 
       .footer-content {
@@ -347,17 +298,13 @@
   </style>
   {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   <!-- Header -->
   <div class="header">
     <div class="logo-section">
-<<<<<<< HEAD
       <div class="logo">
         <img src="{% static 'images/register-logo.png' %}" alt="Sandy Hotel & Apartment">
       </div>
-=======
-      <img src="/static/images/sandy_logo.png" alt="Sandy Hotel Logo" style="width: 50px; height: 50px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: white; object-fit: cover;">
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
       <div class="hotel-name">Sandy Hotel & Apartment</div>
     </div>
      <div class="right-menu">
@@ -374,13 +321,9 @@
          {% endif %}
        </div>
        <div class="user-menu" tabindex="0">
-<<<<<<< HEAD
          <div class="user-icon" tabindex="0">
            <img src="{% static 'images/user-menu-icon.png' %}" alt="Tài khoản">
          </div>
-=======
-         <div class="user-icon" tabindex="0">👤</div>
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
          <div class="user-menu-content">
            {% if user.is_authenticated %}
              <a href="/profile/">Thông tin cá nhân</a>
@@ -391,21 +334,10 @@
                {% csrf_token %}
                <button type="submit">Đăng xuất</button>
              </form>
-<<<<<<< HEAD
             {% else %}
               <a href="/login/">Đăng nhập</a>
               <a href="/register/">Đăng ký</a>
             {% endif %}
-=======
-           {% else %}
-             <form method="post" action="/login/">
-               {% csrf_token %}
-               <input type="email" name="username" placeholder="Email" required>
-               <input type="password" name="password" placeholder="Mật khẩu" required>
-               <button type="submit">Đăng nhập</button>
-             </form>
-           {% endif %}
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
          </div>
        </div>
      </div>
@@ -422,18 +354,6 @@
           </div>
         {% endfor %}
       </div>
-<<<<<<< HEAD
-=======
-      <script>
-        // Ẩn popup sau 5 giây
-        setTimeout(function() {
-          var alerts = document.querySelectorAll('.messages .alert');
-          alerts.forEach(function(alert) {
-            alert.style.display = 'none';
-          });
-        }, 5000);
-      </script>
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     {% endif %}
     {% block content %}{% endblock %}
   </div>

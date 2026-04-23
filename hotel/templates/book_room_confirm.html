@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% load price_filters %}
+
+{% block title %}Xác nhận đặt phòng - Sandy Hotel & Apartment{% endblock %}
+
+{% block extra_css %}
+<style>
+  .confirm-page{max-width:1140px;margin:0 auto;color:#4f3b2b}
+  .layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(340px,.9fr);gap:20px}
+  .stack{display:grid;gap:18px}
+  .panel,.modal{border:1px solid rgba(200,151,58,.24);border-radius:24px;background:linear-gradient(180deg,#fffdf7,#f7efdd);box-shadow:0 18px 34px rgba(103,73,39,.08);overflow:hidden}
+  .panel-head,.modal-head{padding:16px 18px;border-bottom:1px solid rgba(200,151,58,.16)}
+  .panel-body{padding:18px}
+  .section-kicker{display:flex;align-items:center;gap:10px;color:#b8872f;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+  .section-kicker:before{content:"";width:4px;height:16px;border-radius:999px;background:#c8973a}
+  .field-grid,.stay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .field label{display:block;margin-bottom:8px;color:#b8872f;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .field input,.field textarea{width:100%;padding:14px 16px;border:1px solid rgba(200,151,58,.28);border-radius:14px;background:#fffdf8;color:#4f3b2b;font-size:15px}
+  .field textarea{min-height:110px;resize:vertical}
+  .field input[disabled]{background:#fbf5e8;color:#8a755c}
+  .stay-card,.selected-card{border:1px solid rgba(200,151,58,.24);border-radius:14px;background:#fffdf8}
+  .stay-card{padding:14px 16px}
+  .stay-card span,.selected-meta{display:block;color:#b8872f;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .stay-card strong{display:block;margin-top:8px;color:#3f2e20;font-size:26px;line-height:1.1}
+  .stay-card small{display:block;margin-top:2px;color:#9e8461;font-size:13px}
+  .selected-list{display:grid;gap:12px}
+  .selected-card{border-left:3px solid #c8973a;padding:16px}
+  .selected-top,.selected-note,.guest-row,.summary-line,.summary-total,.modal-head,.modal-footer{display:flex;justify-content:space-between;gap:14px}
+  .selected-name{margin-top:4px;font-family:"Playfair Display",Georgia,serif;font-size:30px;line-height:1;color:#3c281b}
+  .selected-price{margin-top:8px;color:#c8973a;font-size:24px;font-weight:700}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .chips span{padding:6px 11px;border:1px solid rgba(200,151,58,.28);border-radius:999px;background:#fbf4e6;color:#8c704b;font-size:12px}
+  .selected-note{align-items:center;margin-top:12px;color:#8b7356;font-size:14px}
+  .icon-button,.step-button,.ghost-button,.primary-button,.modal-button{border:1px solid rgba(184,135,47,.38);border-radius:14px;background:#fffdf8;color:#3e2d20;cursor:pointer;text-decoration:none;transition:.18s}
+  .icon-button,.step-button{width:32px;height:32px;padding:0;font-size:20px;line-height:1}
+  .icon-button:hover,.step-button:hover,.ghost-button:hover,.primary-button:hover,.modal-button:hover{background:#fff6e7;box-shadow:0 10px 24px rgba(103,73,39,.12);transform:translateY(-1px)}
+  .stepper{display:inline-flex;align-items:center;gap:10px}
+  .step-value{min-width:20px;text-align:center;font-size:22px;color:#3f2e20}
+  .add-room{width:100%;padding:14px 16px;font-size:18px}
+  .guest-copy strong{display:block;font-size:22px;font-weight:500;color:#39261a}
+  .guest-copy span{color:#9e8461;font-size:13px}
+  .summary-panel{position:sticky;top:24px}
+  .summary-lines{display:grid;gap:14px}
+  .summary-line{font-size:15px;color:#5f4c39}
+  .summary-total{padding-top:12px;border-top:1px solid rgba(200,151,58,.18);font-size:26px;color:#3f2e20}
+  .summary-total strong:last-child{color:#c8973a}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .ghost-button,.primary-button{padding:14px 16px;text-align:center;font-weight:500}
+  .primary-button{background:linear-gradient(180deg,#fff9ec,#fff1d7)}
+  .feedback{margin-bottom:18px;padding:14px 16px;border-radius:16px;font-size:14px;line-height:1.6;background:#fff2ef;border:1px solid #e9baae;color:#b95c49}
+  .empty-state{border:1px dashed rgba(200,151,58,.34);border-radius:16px;background:rgba(255,253,248,.72);padding:20px;text-align:center;color:#8a7255;line-height:1.7}
+  .overlay{position:fixed;inset:0;background:rgba(58,41,26,.3);backdrop-filter:blur(3px);display:none;z-index:110}
+  .overlay.open{display:block}
+  .modal{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(860px,calc(100vw - 32px));max-height:calc(100vh - 48px);z-index:120;display:none}
+  .modal.open{display:block}
+  .modal-body{padding:18px;overflow:auto;max-height:calc(100vh - 160px)}
+  .modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .modal-card{border:1px solid rgba(200,151,58,.3);border-radius:16px;background:#fffdf8;overflow:hidden}
+  .modal-card.selected{border-color:#c8973a;box-shadow:inset 0 0 0 1px rgba(200,151,58,.24)}
+  .modal-thumb{height:120px;background:linear-gradient(180deg,#efe3c8,#f7eedc);display:flex;align-items:center;justify-content:center}
+  .modal-thumb:before{content:"II";font-size:34px;letter-spacing:10px;font-weight:700;opacity:.18}
+  .modal-copy{padding:14px}
+  .modal-copy h4{margin:4px 0 8px;font-family:"Playfair Display",Georgia,serif;font-size:28px;line-height:1;color:#3e2d20}
+  .modal-copy p{color:#7d644d;font-size:14px;line-height:1.6}
+  .modal-button{width:100%;margin-top:14px;padding:11px 14px}
+  @media (max-width:980px){.layout,.modal-grid{grid-template-columns:1fr}.summary-panel{position:static}}
+  @media (max-width:640px){.field-grid,.stay-grid,.actions{grid-template-columns:1fr}.selected-top,.selected-note,.guest-row{flex-direction:column;align-items:stretch}}
+</style>
+{% endblock %}
+
+{% block content %}
+{{ room_cards|json_script:"room-catalog-data" }}
+<div class="confirm-page">
+  <form method="post" id="booking-form">
+    {% csrf_token %}
+    <input type="hidden" name="check_in" value="{{ search_check_in }}">
+    <input type="hidden" name="check_out" value="{{ search_check_out }}">
+    <input type="hidden" id="selected-rooms-data" name="selected_rooms_data" value='{{ selected_rooms_payload|escape }}'>
+
+    {% if booking_error %}
+      <div class="feedback">{{ booking_error }}</div>
+    {% endif %}
+
+    <div class="layout">
+      <div class="stack">
+        <section class="panel">
+          <div class="panel-head"><div class="section-kicker">Thông tin cá nhân</div></div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <div class="field"><label for="name">Họ tên</label><input id="name" name="name" type="text" value="{{ form_name }}" required></div>
+              <div class="field"><label for="age">Tuổi</label><input id="age" name="age" type="number" min="18" value="{{ form_age }}" required></div>
+              <div class="field"><label for="phone">Số điện thoại</label><input id="phone" name="phone" type="tel" value="{{ form_phone }}" placeholder="0912345678" required></div>
+              <div class="field"><label for="email">Email</label><input id="email" type="email" value="{{ form_email }}" disabled></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div class="section-kicker">Ngày lưu trú</div></div>
+          <div class="panel-body">
+            <div class="stay-grid">
+              <div class="stay-card"><span>Check-in</span><strong>{{ stay_check_in|date:"d/m/Y" }}</strong><small>Từ 14:00</small></div>
+              <div class="stay-card"><span>Check-out</span><strong>{{ stay_check_out|date:"d/m/Y" }}</strong><small>Trước 12:00</small></div>
+              <div class="stay-card"><span>Số đêm</span><strong>{{ nights }}</strong><small>đêm</small></div>
+              <div class="stay-card"><span>Tổng dự tính</span><strong id="stay-total">{{ total_cost|format_price }} VND</strong><small>Cập nhật theo phòng đã chọn</small></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div class="section-kicker">Phòng đã chọn</div></div>
+          <div class="panel-body">
+            <div id="selected-rooms-list" class="selected-list"></div>
+            <button type="button" id="open-room-selector" class="ghost-button add-room">+ Đặt thêm phòng khác</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div class="section-kicker">Số người</div></div>
+          <div class="panel-body">
+            <div class="guest-row">
+              <div class="guest-copy"><strong>Số khách</strong><span id="guest-capacity-label">/ tối đa {{ max_guest_count }} người</span></div>
+              <div class="stepper">
+                <button type="button" class="step-button" id="guest-minus">-</button>
+                <input type="hidden" id="guest-count-input" name="guest_count" value="{{ guest_count }}">
+                <div class="step-value" id="guest-count-value">{{ guest_count }}</div>
+                <button type="button" class="step-button" id="guest-plus">+</button>
+              </div>
+            </div>
+            <div class="field"><textarea name="special_request" placeholder="Yêu cầu thêm (nếu có)...">{{ special_request }}</textarea></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel summary-panel">
+        <div class="panel-head"><div class="section-kicker">Tổng chi phí</div></div>
+        <div class="panel-body">
+          <div id="summary-lines" class="summary-lines"></div>
+          <div class="summary-total"><strong>Tổng dự tính</strong><strong id="summary-total-value">{{ total_cost|format_price }} VND</strong></div>
+          <div class="actions">
+            <a href="?check_in={{ search_check_in }}&check_out={{ search_check_out }}" class="ghost-button">Quay lại</a>
+            <button type="submit" class="primary-button">Xác nhận đặt phòng</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </form>
+
+  <div id="room-overlay" class="overlay"></div>
+  <section id="room-modal" class="modal" aria-hidden="true">
+    <div class="modal-head">
+      <div class="section-kicker">Chọn loại phòng</div>
+      <button type="button" id="close-room-selector" class="ghost-button" style="padding:10px 14px">Đóng</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        {% for room_type in room_cards %}
+          <article class="modal-card" data-room-type-id="{{ room_type.id }}">
+            <div class="modal-thumb"></div>
+            <div class="modal-copy">
+              <div class="selected-meta">{{ room_type.name|upper }}</div>
+              <h4>{{ room_type.name }}</h4>
+              <p>{{ room_type.description }}</p>
+              <div class="chips">{% for amenity in room_type.amenities %}<span>{{ amenity }}</span>{% endfor %}</div>
+              <div class="modal-footer"><span>tối đa {{ room_type.capacity }} người</span><span>{{ room_type.available_count }} phòng còn trống</span></div>
+              <div class="selected-price" style="font-size:22px">{{ room_type.base_price|format_price }} VND <span style="font-size:14px;font-weight:400">/ đêm</span></div>
+              <button type="button" class="modal-button" data-add-room="{{ room_type.id }}">Đặt phòng</button>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  (() => {
+    const catalogNode = document.getElementById("room-catalog-data");
+    const hiddenInput = document.getElementById("selected-rooms-data");
+    if (!catalogNode || !hiddenInput) return;
+    const catalog = JSON.parse(catalogNode.textContent || "[]");
+    const roomMap = new Map(catalog.map((room) => [String(room.id), room]));
+    const numberFormat = new Intl.NumberFormat("vi-VN");
+    const nights = {{ nights|default:0 }};
+    const selectedList = document.getElementById("selected-rooms-list");
+    const summaryLines = document.getElementById("summary-lines");
+    const summaryTotal = document.getElementById("summary-total-value");
+    const stayTotal = document.getElementById("stay-total");
+    const guestInput = document.getElementById("guest-count-input");
+    const guestValue = document.getElementById("guest-count-value");
+    const guestLabel = document.getElementById("guest-capacity-label");
+    const guestMinus = document.getElementById("guest-minus");
+    const guestPlus = document.getElementById("guest-plus");
+    const modal = document.getElementById("room-modal");
+    const overlay = document.getElementById("room-overlay");
+    let selectedRooms = [];
+    try { selectedRooms = JSON.parse(hiddenInput.value || "[]"); } catch (error) { selectedRooms = []; }
+
+    const money = (value) => `${numberFormat.format(value)} VND`;
+    const totals = () => selectedRooms.reduce((acc, item) => {
+      const room = roomMap.get(String(item.room_type_id));
+      if (!room) return acc;
+      acc.capacity += room.capacity * item.quantity;
+      acc.cost += room.base_price * item.quantity * nights;
+      return acc;
+    }, { capacity: 0, cost: 0 });
+
+    function clampGuests() {
+      const max = Math.max(totals().capacity, 1);
+      let value = parseInt(guestInput.value || "1", 10);
+      if (Number.isNaN(value) || value < 1) value = 1;
+      if (value > max) value = max;
+      guestInput.value = value;
+      guestValue.textContent = value;
+      guestLabel.textContent = `/ tối đa ${max} người`;
+      guestMinus.disabled = value <= 1;
+      guestPlus.disabled = value >= max;
+    }
+
+    function syncModalState() {
+      document.querySelectorAll("[data-add-room]").forEach((button) => {
+        const roomId = String(button.dataset.addRoom);
+        const selected = selectedRooms.some((item) => String(item.room_type_id) === roomId);
+        button.disabled = selected;
+        button.textContent = selected ? "Đã chọn" : "Đặt phòng";
+        const card = button.closest(".modal-card");
+        if (card) card.classList.toggle("selected", selected);
+      });
+    }
+
+    function renderSelectedRooms() {
+      if (!selectedRooms.length) {
+        selectedList.innerHTML = '<div class="empty-state">Bạn chưa chọn phòng nào. Hãy quay lại để chọn lại hoặc thêm phòng trong khung này.</div>';
+        return;
+      }
+      selectedList.innerHTML = selectedRooms.map((item) => {
+        const room = roomMap.get(String(item.room_type_id));
+        if (!room) return "";
+        const amenityHtml = (room.amenities || []).map((amenity) => `<span>${amenity}</span>`).join("");
+        return `<article class="selected-card">
+          <div class="selected-top">
+            <div>
+              <div class="selected-meta">${room.name.toUpperCase()}</div>
+              <div class="selected-name">${room.name}</div>
+              <div class="selected-price">${money(room.base_price)} <span style="font-size:16px;font-weight:400">/ đêm</span></div>
+            </div>
+            <button type="button" class="icon-button" data-remove-room="${room.id}">x</button>
+          </div>
+          <div class="chips">${amenityHtml}</div>
+          <div class="selected-note">
+            <span>Số phòng / tối đa ${room.capacity} người - còn ${room.available_count}</span>
+            <div class="stepper">
+              <button type="button" class="step-button" data-room-step="${room.id}" data-step="down">-</button>
+              <div class="step-value">${item.quantity}</div>
+              <button type="button" class="step-button" data-room-step="${room.id}" data-step="up">+</button>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    function renderSummary() {
+      if (!selectedRooms.length) {
+        summaryLines.innerHTML = '<div class="empty-state">Chưa có phòng nào trong đơn đặt.</div>';
+        summaryTotal.textContent = money(0);
+        stayTotal.textContent = money(0);
+        return;
+      }
+      summaryLines.innerHTML = selectedRooms.map((item) => {
+        const room = roomMap.get(String(item.room_type_id));
+        if (!room) return "";
+        return `<div class="summary-line"><span>${room.name} x ${item.quantity} phòng x ${nights} đêm</span><strong>${money(room.base_price * item.quantity * nights)}</strong></div>`;
+      }).join("");
+      const total = totals().cost;
+      summaryTotal.textContent = money(total);
+      stayTotal.textContent = money(total);
+    }
+
+    function render() {
+      selectedRooms = selectedRooms.map((item) => {
+        const room = roomMap.get(String(item.room_type_id));
+        if (!room) return null;
+        return { room_type_id: String(item.room_type_id), quantity: Math.max(1, Math.min(item.quantity, room.available_count)) };
+      }).filter(Boolean);
+      hiddenInput.value = JSON.stringify(selectedRooms);
+      renderSelectedRooms();
+      renderSummary();
+      clampGuests();
+      syncModalState();
+    }
+
+    document.getElementById("open-room-selector").addEventListener("click", () => {
+      modal.classList.add("open");
+      overlay.classList.add("open");
+    });
+    document.getElementById("close-room-selector").addEventListener("click", () => {
+      modal.classList.remove("open");
+      overlay.classList.remove("open");
+    });
+    overlay.addEventListener("click", () => {
+      modal.classList.remove("open");
+      overlay.classList.remove("open");
+    });
+
+    guestMinus.addEventListener("click", () => {
+      guestInput.value = Math.max(1, parseInt(guestInput.value || "1", 10) - 1);
+      clampGuests();
+    });
+    guestPlus.addEventListener("click", () => {
+      guestInput.value = parseInt(guestInput.value || "1", 10) + 1;
+      clampGuests();
+    });
+
+    document.addEventListener("click", (event) => {
+      const addButton = event.target.closest("[data-add-room]");
+      if (addButton) {
+        const roomId = String(addButton.dataset.addRoom);
+        if (!selectedRooms.some((item) => String(item.room_type_id) === roomId)) {
+          selectedRooms.push({ room_type_id: roomId, quantity: 1 });
+        }
+        render();
+        modal.classList.remove("open");
+        overlay.classList.remove("open");
+        return;
+      }
+
+      const removeButton = event.target.closest("[data-remove-room]");
+      if (removeButton) {
+        const roomId = String(removeButton.dataset.removeRoom);
+        selectedRooms = selectedRooms.filter((item) => String(item.room_type_id) !== roomId);
+        render();
+        return;
+      }
+
+      const stepButton = event.target.closest("[data-room-step]");
+      if (stepButton) {
+        const roomId = String(stepButton.dataset.roomStep);
+        const room = roomMap.get(roomId);
+        selectedRooms = selectedRooms.map((item) => {
+          if (String(item.room_type_id) !== roomId || !room) return item;
+          const next = stepButton.dataset.step === "up" ? item.quantity + 1 : item.quantity - 1;
+          return { ...item, quantity: Math.max(1, Math.min(next, room.available_count)) };
+        });
+        render();
+      }
+    });
+
+    render();
+  })();
+</script>
+{% endblock %}

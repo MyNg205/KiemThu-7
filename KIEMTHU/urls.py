@@ -22,10 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('login/', views.login_view, name='login'),
-<<<<<<< HEAD
     path('register/', views.register_view, name='register'),
-=======
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('booking-history/', views.booking_history, name='booking_history'),

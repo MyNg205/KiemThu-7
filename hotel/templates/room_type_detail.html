@@ -1,249 +1,484 @@
 {% extends 'base.html' %}
-
-{% load price_filters %}
+{% load static price_filters %}
 
 {% block title %}{{ room_type.name }} - Sandy Hotel & Apartment{% endblock %}
 
 {% block extra_css %}
 <style>
-  .type-detail-header {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  .room-detail-page {
+    max-width: 1120px;
+    margin: 0 auto;
+    color: #4c3928;
   }
 
-  .type-detail-header h1 {
-    color: #D4AF37;
-<<<<<<< HEAD
-    font-size: 32px;
-=======
-    font-size: 35px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    margin-bottom: 10px;
-  }
-
-  .type-info {
+  .room-detail-shell {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 18px;
   }
 
-  .type-image {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #EEE;
+  .detail-card {
+    border: 1px solid rgba(200, 151, 58, 0.22);
+    border-radius: 20px;
+    background: linear-gradient(180deg, #fffdf7 0%, #f8f0df 100%);
+    box-shadow: 0 18px 34px rgba(103, 73, 39, 0.08);
   }
 
-  .type-details {
-    background: #FFF8DC;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 5px solid #D4AF37;
+  .gallery-card {
+    padding: 14px;
   }
 
-  .type-details h3 {
-    color: #D4AF37;
-<<<<<<< HEAD
-    font-size: 18px;
-=======
-    font-size: 21px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    margin-bottom: 15px;
-  }
-
-  .type-details p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 10px;
-  }
-
-  .rooms-section {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-  }
-
-  .rooms-section h2 {
-    color: #D4AF37;
-<<<<<<< HEAD
-    font-size: 24px;
-=======
-    font-size: 27px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    margin-bottom: 20px;
-  }
-
-  .rooms-grid {
-    display: grid;
-<<<<<<< HEAD
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-=======
-    grid-template-columns: repeat(2, 1fr);
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    gap: 20px;
-  }
-
-  .room-card {
-    background: white;
-    border: 1px solid #DDD;
-    border-radius: 8px;
+  .gallery-stage {
+    position: relative;
+    height: 560px;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #eadcc4;
   }
 
-  .room-header {
-    background: #F9F9F9;
-    padding: 15px;
-    border-bottom: 1px solid #DDD;
+  .gallery-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.42s ease;
   }
 
-  .room-number {
-<<<<<<< HEAD
-    font-size: 18px;
-=======
-    font-size: 21px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    font-weight: bold;
-    color: #333;
+  .gallery-slide.active {
+    opacity: 1;
   }
 
-  .room-floor {
-    color: #666;
-<<<<<<< HEAD
-    font-size: 14px;
-=======
-    font-size: 17px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-  }
-
-  .room-body {
-    padding: 15px;
-  }
-
-  .room-price {
-    color: #E8A652;
-<<<<<<< HEAD
-    font-size: 18px;
-=======
-    font-size: 21px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  .room-features {
-<<<<<<< HEAD
-    font-size: 13px;
-=======
-    font-size: 16px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    color: #666;
-    margin-bottom: 15px;
-  }
-
-  .btn-book {
+  .gallery-slide img {
     width: 100%;
-    padding: 10px;
-    background: #E8A652;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    text-decoration: none;
+    height: 100%;
+    object-fit: cover;
     display: block;
+  }
+
+  .gallery-count {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(32, 24, 18, 0.6);
+    color: #fffdf8;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .gallery-nav {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    pointer-events: none;
+  }
+
+  .gallery-button {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    background: rgba(255, 253, 248, 0.15);
+    color: #fffdf8;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    pointer-events: auto;
+    backdrop-filter: blur(4px);
+  }
+
+  .gallery-thumbs {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .gallery-thumb {
+    position: relative;
+    flex: 0 0 86px;
+    width: 86px;
+    height: 58px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e9dcc4;
+    cursor: pointer;
+  }
+
+  .gallery-thumb.active {
+    border-color: #c8973a;
+    box-shadow: 0 0 0 2px rgba(200, 151, 58, 0.18);
+  }
+
+  .gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .summary-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .summary-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(200, 151, 58, 0.16);
+    align-items: flex-end;
+  }
+
+  .summary-label {
+    color: #b8872f;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .summary-title {
+    margin-top: 4px;
+    color: #2f2017;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 40px;
+    line-height: 0.98;
+  }
+
+  .summary-price {
+    text-align: right;
+    color: #c8973a;
+    white-space: nowrap;
+  }
+
+  .summary-price strong {
+    display: block;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .summary-price span {
+    color: #a4865f;
+    font-size: 14px;
+  }
+
+  .summary-body {
+    padding: 16px 18px 18px;
+  }
+
+  .summary-note {
+    padding: 16px 18px;
+    border-left: 3px solid #c8973a;
+    background: rgba(255, 253, 248, 0.72);
+    color: #6a5541;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .section-block + .section-block {
+    margin-top: 22px;
+  }
+
+  .section-heading {
+    margin-bottom: 12px;
+    color: #b8872f;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .info-box {
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: rgba(245, 234, 208, 0.5);
+  }
+
+  .info-box span {
+    display: block;
+    color: #a68a61;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .info-box strong {
+    color: #3c2a1f;
+    font-size: 18px;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  .pill-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 8px 14px;
+    border: 1px solid rgba(200, 151, 58, 0.32);
+    border-radius: 999px;
+    background: #fffdf8;
+    color: #71593e;
+    font-size: 15px;
+    line-height: 1.3;
     text-align: center;
   }
 
-  .btn-book:hover {
-    background: #D39441;
-  }
-
-  .back-link {
-    color: #D4AF37;
-    text-decoration: none;
-    font-weight: 600;
-    margin-bottom: 20px;
-    display: inline-block;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
-  }
-
-  .available-count {
-    background: #E8F4F8;
-    border-left: 4px solid #3498DB;
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-<<<<<<< HEAD
+  .rules-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #6a5541;
     font-size: 16px;
-=======
-    font-size: 19px;
->>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
-    color: #555;
+    line-height: 1.9;
+  }
+
+  .rules-list li::marker {
+    color: #c8973a;
+  }
+
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 16px;
+    border: 1px solid rgba(184, 135, 47, 0.36);
+    border-radius: 12px;
+    background: #fffdf8;
+    color: #3e2d20;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+
+  .action-button:hover {
+    background: #fff6e7;
+    box-shadow: 0 10px 24px rgba(103, 73, 39, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .action-button.primary {
+    background: linear-gradient(180deg, #fff9ec 0%, #fff1d7 100%);
   }
 
   @media (max-width: 768px) {
-    .type-info {
-      grid-template-columns: 1fr;
+    .gallery-stage {
+      height: 340px;
     }
 
-    .rooms-grid {
+    .summary-head,
+    .action-row,
+    .info-grid {
       grid-template-columns: 1fr;
+      display: grid;
+    }
+
+    .summary-price {
+      text-align: left;
+    }
+
+    .pill-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<a href="/" class="back-link">← Quay lại danh sách loại phòng</a>
-
-<div class="type-detail-header">
-  <h1>{{ room_type.name }}</h1>
-  <div class="available-count">
-    📊 Số phòng hiện có: {{ rooms|length }}
-  </div>
-</div>
-
-<div class="type-info">
-  <img src="{{ room_type.image }}" alt="{{ room_type.name }}" class="type-image">
-  <div class="type-details">
-    <h3>Thông tin loại phòng</h3>
-    <p><strong>Giá cơ bản:</strong> {{ room_type.base_price|format_price }} VND/đêm</p>
-    <p><strong>Sức chứa:</strong> {{ room_type.capacity }} người</p>
-    <p><strong>Số giường:</strong> {{ room_type.bed_count }} giường</p>
-    <p><strong>Mô tả:</strong> {{ room_type.description }}</p>
-    <p><strong>Tiện nghi:</strong> {{ room_type.amenities }}</p>
-  </div>
-</div>
-
-<div class="rooms-section">
-  <h2>Các phòng có sẵn</h2>
-  <div class="rooms-grid">
-    {% for room in rooms %}
-      <div class="room-card">
-        <div class="room-header">
-          <div class="room-number">Phòng {{ room.room_number }}</div>
-          <div class="room-floor">Tầng {{ room.floor }}</div>
-        </div>
-        <div class="room-body">
-          <div class="room-price">{{ room.room_type.base_price|format_price }} VND/đêm</div>
-          <div class="room-features">
-            Sức chứa: {{ room.room_type.capacity }} người | Số giường: {{ room.room_type.bed_count }}
+<div class="room-detail-page">
+  <div class="room-detail-shell">
+    <section class="detail-card gallery-card">
+      <div class="gallery-stage">
+        <div class="gallery-count"><span id="gallery-index">1</span> / {{ detail.gallery|length }}</div>
+        {% for slide in detail.gallery %}
+          <div class="gallery-slide{% if forloop.first %} active{% endif %}" data-gallery-slide>
+            <img src="{% static slide.image %}" alt="{{ room_type.name }} - {{ slide.title }}" style="object-position: {{ slide.position }};">
           </div>
-          <a href="/book/{{ room.id }}/" class="btn-book">📅 Đặt phòng</a>
+        {% endfor %}
+        <div class="gallery-nav">
+          <button type="button" class="gallery-button" id="gallery-prev">&#8249;</button>
+          <button type="button" class="gallery-button" id="gallery-next">&#8250;</button>
         </div>
       </div>
-    {% endfor %}
+
+      <div class="gallery-thumbs">
+        {% for slide in detail.gallery %}
+          <button type="button" class="gallery-thumb{% if forloop.first %} active{% endif %}" data-gallery-thumb="{{ forloop.counter0 }}">
+            <img src="{% static slide.image %}" alt="{{ slide.title }}" style="object-position: {{ slide.position }};">
+          </button>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="detail-card summary-card">
+      <div class="summary-head">
+        <div>
+          <div class="summary-label">{{ room_type.name|upper }}</div>
+          <div class="summary-title">{{ room_type.name }}</div>
+        </div>
+        <div class="summary-price">
+          <strong>{{ room_type.base_price|format_price }} VND</strong>
+          <span>/ đêm</span>
+        </div>
+      </div>
+
+      <div class="summary-body">
+        <div class="summary-note">{{ detail.short_description }}</div>
+
+        <div class="section-block">
+          <div class="section-heading">Thông tin cơ bản</div>
+          <div class="info-grid">
+            <div class="info-box">
+              <span>Diện tích</span>
+              <strong>{{ detail.room_size }}</strong>
+            </div>
+            <div class="info-box">
+              <span>Số người tối đa</span>
+              <strong>{{ room_type.capacity }} người</strong>
+            </div>
+            <div class="info-box">
+              <span>Bố trí giường</span>
+              <strong>{{ room_type.bed_count }} giường tiêu chuẩn nghỉ dưỡng</strong>
+            </div>
+            <div class="info-box">
+              <span>Tầm nhìn</span>
+              <strong>{{ detail.view }}</strong>
+            </div>
+            <div class="info-box">
+              <span>Phong cách phòng</span>
+              <strong>{{ detail.headline }}</strong>
+            </div>
+            <div class="info-box">
+              <span>Phù hợp cho</span>
+              <strong>Kỳ nghỉ tối đa {{ room_type.capacity }} khách</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-heading">Tiện nghi trong phòng</div>
+          <div class="pill-grid">
+            {% for item in detail.amenities %}
+              <span class="pill">{{ item }}</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-heading">Dịch vụ đi kèm</div>
+          <div class="pill-group">
+            {% for item in detail.services %}
+              <span class="pill">{{ item }}</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-heading">Quy định phòng</div>
+          <ul class="rules-list">
+            {% for item in detail.rules %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="action-row">
+          <a href="{{ back_url }}" class="action-button">Quay lại</a>
+          <a href="{{ booking_url }}" class="action-button primary">Đặt phòng ngay</a>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
+
+<script>
+  (() => {
+    const slides = Array.from(document.querySelectorAll("[data-gallery-slide]"));
+    const thumbs = Array.from(document.querySelectorAll("[data-gallery-thumb]"));
+    const indexNode = document.getElementById("gallery-index");
+    if (!slides.length) return;
+
+    let currentIndex = 0;
+    let timerId = null;
+
+    function showSlide(index) {
+      currentIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === currentIndex);
+      });
+      thumbs.forEach((thumb, thumbIndex) => {
+        thumb.classList.toggle("active", thumbIndex === currentIndex);
+      });
+      if (indexNode) {
+        indexNode.textContent = String(currentIndex + 1);
+      }
+    }
+
+    function restartAutoPlay() {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+      timerId = window.setInterval(() => showSlide(currentIndex + 1), 3200);
+    }
+
+    const prevButton = document.getElementById("gallery-prev");
+    const nextButton = document.getElementById("gallery-next");
+
+    if (prevButton) {
+      prevButton.addEventListener("click", () => {
+        showSlide(currentIndex - 1);
+        restartAutoPlay();
+      });
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener("click", () => {
+        showSlide(currentIndex + 1);
+        restartAutoPlay();
+      });
+    }
+
+    thumbs.forEach((thumb, index) => {
+      thumb.addEventListener("click", () => {
+        showSlide(index);
+        restartAutoPlay();
+      });
+    });
+
+    restartAutoPlay();
+  })();
+</script>
 {% endblock %}

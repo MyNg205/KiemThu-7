@@ -1,0 +1,999 @@
+{% extends 'base.html' %}
+{% load static price_filters %}
+
+{% block title %}Trang chủ khách - Sandy Hotel & Apartment{% endblock %}
+{% block body_class %}customer-home-page{% endblock %}
+
+{% block extra_css %}
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+
+  :root {
+    --sand-50: #fbf6ef;
+    --sand-100: #f4eadc;
+    --sand-200: #ecdcc6;
+    --sand-300: #d9bc91;
+    --gold-500: #c9964a;
+    --gold-600: #b98033;
+    --cocoa-700: #5a4131;
+    --cocoa-800: #442f23;
+    --stone-500: #86715e;
+    --shadow-soft: 0 20px 45px rgba(79, 53, 31, 0.14);
+    --shadow-card: 0 16px 34px rgba(79, 53, 31, 0.12);
+  }
+
+  .customer-home-page {
+    background:
+      radial-gradient(circle at top left, rgba(216, 188, 146, 0.2), transparent 30%),
+      linear-gradient(180deg, #f8f1e7 0%, #fbf7f1 35%, #f4ebde 100%);
+    color: var(--cocoa-800);
+    overflow-x: hidden;
+    scroll-snap-type: y proximity;
+  }
+
+  .customer-home-page .container {
+    max-width: 100%;
+    min-height: auto;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .customer-home-page .footer {
+    margin-top: 0;
+    background: #f2e5d3;
+    border-top-color: rgba(185, 128, 51, 0.18);
+  }
+
+  .customer-home-shell {
+    width: 100%;
+    margin: -30px 0 0;
+    overflow: hidden;
+  }
+
+  .home-section {
+    position: relative;
+    min-height: 92vh;
+    padding: 86px 0;
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+
+  .section-inner {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-heading {
+    max-width: 660px;
+    margin-bottom: 38px;
+  }
+
+  .section-heading.centered {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(201, 150, 74, 0.12);
+    color: var(--gold-600);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .section-heading h1,
+  .section-heading h2 {
+    margin-bottom: 18px;
+    color: var(--cocoa-800);
+    line-height: 1.08;
+  }
+
+  .section-heading h1 {
+    font-size: clamp(36px, 4vw, 58px);
+  }
+
+  .section-heading h2 {
+    font-size: clamp(30px, 3.4vw, 48px);
+  }
+
+  .section-heading p {
+    color: var(--stone-500);
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  .hero-section {
+    min-height: calc(100vh - 86px);
+    padding: 74px 0 84px;
+    background:
+      radial-gradient(circle at top right, rgba(201, 150, 74, 0.18), transparent 28%),
+      radial-gradient(circle at bottom left, rgba(216, 188, 146, 0.24), transparent 26%),
+      linear-gradient(135deg, #fbf6ef 0%, #f6ebdb 58%, #f1e0ca 100%);
+  }
+
+  .hero-section::before,
+  .story-section::before,
+  .reasons-section::before,
+  .rooms-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(201, 150, 74, 0.08) 0 2px, transparent 2px),
+      radial-gradient(circle at 78% 28%, rgba(201, 150, 74, 0.08) 0 2px, transparent 2px),
+      radial-gradient(circle at 30% 70%, rgba(201, 150, 74, 0.08) 0 2px, transparent 2px);
+    background-size: 180px 180px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+    gap: 44px;
+    align-items: center;
+  }
+
+  .hero-copy {
+    padding: 24px 0;
+  }
+
+  .hero-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+
+  .hero-highlights span {
+    padding: 10px 16px;
+    border: 1px solid rgba(185, 128, 51, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--cocoa-700);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .hero-stat {
+    display: block;
+    padding: 22px 24px;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(255, 252, 248, 0.98), rgba(245, 234, 218, 0.94));
+    border: 1px solid rgba(185, 128, 51, 0.12);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+
+  .hero-stat strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--gold-600);
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .hero-stat span {
+    color: var(--stone-500);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .hero-stat-link {
+    cursor: pointer;
+  }
+
+  .hero-stat-link::after {
+    content: "Xem thêm";
+    display: inline-flex;
+    margin-top: 16px;
+    color: var(--gold-600);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-stat-link:hover {
+    transform: translateY(-3px);
+    border-color: rgba(185, 128, 51, 0.24);
+    box-shadow: 0 18px 34px rgba(79, 53, 31, 0.16);
+  }
+
+  .hero-visual {
+    position: relative;
+    min-height: 620px;
+  }
+
+  .hero-card-main,
+  .hero-card-secondary,
+  .hero-card-note {
+    position: absolute;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .hero-card-main {
+    inset: 20px 90px 90px 0;
+  }
+
+  .hero-card-secondary {
+    right: 0;
+    top: 0;
+    width: 300px;
+    height: 240px;
+    border: 10px solid rgba(251, 246, 239, 0.95);
+  }
+
+  .hero-card-note {
+    right: 24px;
+    bottom: 22px;
+    width: 280px;
+    padding: 26px;
+    overflow: visible;
+    background: rgba(76, 54, 38, 0.92);
+    color: #fff5e9;
+  }
+
+  .hero-card-main img,
+  .hero-card-secondary img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-card-note::before {
+    content: "";
+    position: absolute;
+    top: -18px;
+    right: 24px;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eec98d, #d79e4d);
+    opacity: 0.85;
+    z-index: -1;
+  }
+
+  .hero-note-label {
+    color: rgba(255, 245, 233, 0.7);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-note-title {
+    margin: 12px 0 10px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .hero-note-copy {
+    color: rgba(255, 245, 233, 0.82);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .story-section {
+    background: linear-gradient(180deg, rgba(255, 248, 240, 0.94) 0%, rgba(248, 239, 227, 0.98) 100%);
+  }
+
+  .story-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 470px);
+    gap: 40px;
+    align-items: center;
+  }
+
+  .story-copy {
+    display: grid;
+    gap: 22px;
+  }
+
+  .story-panel {
+    padding: 28px 30px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(185, 128, 51, 0.14);
+    box-shadow: var(--shadow-card);
+  }
+
+  .story-panel p {
+    color: var(--stone-500);
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .story-badges {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .story-badge {
+    padding: 20px 22px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #fff9f1, #f3e5d0);
+    border: 1px solid rgba(185, 128, 51, 0.14);
+  }
+
+  .story-badge strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--cocoa-800);
+    font-size: 16px;
+  }
+
+  .story-badge span {
+    color: var(--stone-500);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .story-visual {
+    position: relative;
+    min-height: 540px;
+  }
+
+  .story-frame-main,
+  .story-frame-secondary {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 28px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .story-frame-main {
+    inset: 0 60px 90px 0;
+  }
+
+  .story-frame-secondary {
+    right: 0;
+    bottom: 0;
+    width: 260px;
+    height: 260px;
+    border: 10px solid rgba(251, 246, 239, 0.92);
+  }
+
+  .story-frame-main img,
+  .story-frame-secondary img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .story-quote {
+    position: absolute;
+    left: 28px;
+    bottom: 24px;
+    max-width: 260px;
+    padding: 18px 20px;
+    border-radius: 24px;
+    background: rgba(255, 249, 241, 0.92);
+    color: var(--cocoa-700);
+    font-weight: 600;
+    line-height: 1.7;
+    box-shadow: var(--shadow-card);
+  }
+
+  .reasons-section {
+    background:
+      radial-gradient(circle at top center, rgba(216, 188, 146, 0.24), transparent 35%),
+      linear-gradient(180deg, #f7efe4 0%, #f1e4d1 100%);
+  }
+
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-bottom: 28px;
+  }
+
+  .reason-card {
+    padding: 30px 28px 28px;
+    border-radius: 28px;
+    background: rgba(255, 250, 245, 0.8);
+    border: 1px solid rgba(185, 128, 51, 0.12);
+    box-shadow: var(--shadow-card);
+  }
+
+  .reason-icon {
+    width: 62px;
+    height: 62px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(232, 188, 119, 0.18), rgba(201, 150, 74, 0.22));
+    color: var(--gold-600);
+  }
+
+  .reason-icon svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .reason-card h3 {
+    margin-bottom: 14px;
+    color: var(--cocoa-800);
+    font-size: 22px;
+  }
+
+  .reason-card p {
+    color: var(--stone-500);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .experience-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 26px;
+    align-items: center;
+    padding: 30px 32px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(85, 59, 40, 0.95), rgba(108, 75, 52, 0.96));
+    color: #fff6eb;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .experience-band h3 {
+    margin-bottom: 14px;
+    font-size: 28px;
+  }
+
+  .experience-band p {
+    color: rgba(255, 246, 235, 0.82);
+    line-height: 1.8;
+  }
+
+  .experience-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  .experience-chips span {
+    padding: 12px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 236, 210, 0.14);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .rooms-section {
+    background:
+      radial-gradient(circle at top right, rgba(201, 150, 74, 0.18), transparent 26%),
+      linear-gradient(180deg, #fcf7ef 0%, #f2e5d3 100%);
+  }
+
+  .rooms-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 34px;
+  }
+
+  .rooms-summary {
+    display: block;
+    min-width: 240px;
+    padding: 22px 24px;
+    border-radius: 26px;
+    background: rgba(255, 249, 241, 0.84);
+    border: 1px solid rgba(185, 128, 51, 0.16);
+    box-shadow: var(--shadow-card);
+    text-align: left;
+    text-decoration: none;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+
+  .rooms-summary:hover {
+    transform: translateY(-3px);
+    border-color: rgba(185, 128, 51, 0.24);
+    box-shadow: 0 18px 34px rgba(79, 53, 31, 0.16);
+  }
+
+  .rooms-summary strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--gold-600);
+    font-size: 32px;
+  }
+
+  .rooms-summary span {
+    color: var(--stone-500);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .rooms-summary::after {
+    content: "Xem danh sách";
+    display: inline-flex;
+    margin-top: 14px;
+    color: var(--gold-600);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .room-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .room-card {
+    display: grid;
+    grid-template-rows: 250px auto;
+    overflow: hidden;
+    border-radius: 30px;
+    background: rgba(255, 252, 247, 0.92);
+    border: 1px solid rgba(185, 128, 51, 0.12);
+    box-shadow: var(--shadow-card);
+  }
+
+  .room-media {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .room-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s ease;
+  }
+
+  .room-card:hover .room-media img {
+    transform: scale(1.05);
+  }
+
+  .room-badge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    padding: 10px 16px;
+    border-radius: 18px;
+    background: rgba(255, 248, 239, 0.94);
+    color: var(--cocoa-800);
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(60, 41, 30, 0.15);
+  }
+
+  .room-content {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  .room-meta {
+    color: var(--gold-600);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .room-content h3 {
+    margin-top: -4px;
+    color: var(--cocoa-800);
+    font-size: 28px;
+  }
+
+  .room-description {
+    min-height: 110px;
+    color: var(--stone-500);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .room-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .room-amenities span {
+    padding: 9px 13px;
+    border-radius: 999px;
+    background: rgba(201, 150, 74, 0.12);
+    color: var(--cocoa-700);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .room-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .room-price strong {
+    display: block;
+    color: var(--gold-600);
+    font-size: 24px;
+  }
+
+  .room-price span {
+    color: var(--stone-500);
+    font-size: 13px;
+  }
+
+  .room-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 148px;
+    padding: 13px 22px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #d1a25e, #b98033);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(185, 128, 51, 0.24);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .room-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px rgba(185, 128, 51, 0.28);
+  }
+
+  @media (max-width: 1100px) {
+    .hero-grid,
+    .story-layout,
+    .experience-band {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-visual,
+    .story-visual {
+      min-height: 520px;
+    }
+
+    .reasons-grid,
+    .room-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .experience-chips {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .home-section {
+      min-height: auto;
+      padding: 70px 0;
+    }
+
+    .hero-section {
+      min-height: auto;
+      padding-top: 54px;
+    }
+
+    .section-inner {
+      width: min(100%, calc(100% - 24px));
+    }
+
+    .hero-stats,
+    .story-badges,
+    .reasons-grid,
+    .room-grid,
+    .rooms-header {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+      min-height: 520px;
+    }
+
+    .hero-card-main {
+      inset: 70px 0 110px 0;
+    }
+
+    .hero-card-secondary {
+      left: 16px;
+      right: auto;
+      width: 220px;
+      height: 170px;
+    }
+
+    .hero-card-note {
+      right: 16px;
+      left: 16px;
+      width: auto;
+      bottom: 0;
+    }
+
+    .story-visual {
+      min-height: 470px;
+    }
+
+    .story-frame-main {
+      inset: 0 0 110px 0;
+    }
+
+    .story-frame-secondary {
+      width: 200px;
+      height: 200px;
+    }
+
+    .room-footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .room-link {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="customer-home-shell">
+  <section class="hero-section home-section">
+    <div class="section-inner hero-grid">
+      <div class="hero-copy">
+        <div class="section-heading">
+          <div class="section-kicker">Trang chủ</div>
+          <h1>Bắt đầu hành trình nghỉ dưỡng của bạn tại Sandy Hotel & Apartment</h1>
+          <p>
+            Không gian lưu trú được làm mới theo tinh thần nghỉ dưỡng ven biển:
+            ấm áp, tinh gọn, đủ riêng tư để thư giãn nhưng vẫn gần mọi nhịp sống đẹp nhất của Đà Nẵng.
+          </p>
+        </div>
+
+        <div class="hero-highlights">
+          <span>Check-in linh hoạt 24/7</span>
+          <span>Không gian sáng và ấm</span>
+          <span>Di chuyển nhanh ra biển Mỹ Khê</span>
+        </div>
+
+        <div class="hero-stats">
+          <a href="#rooms-section" class="hero-stat hero-stat-link">
+            <strong>{{ room_types|length }}</strong>
+            <span>Hạng phòng được tuyển chọn theo nhu cầu nghỉ dưỡng ngắn và dài ngày.</span>
+          </a>
+          <a href="#rooms-section" class="hero-stat hero-stat-link">
+            <strong>{{ available_room_total }}</strong>
+            <span>Phòng đang sẵn sàng để bạn bắt đầu kỳ nghỉ ngay hôm nay.</span>
+          </a>
+          <div class="hero-stat">
+            <strong>24/7</strong>
+            <span>Lễ tân và hỗ trợ để hành trình của bạn luôn trọn vẹn, mượt mà.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-card-main">
+          {% if featured_room %}
+            <img src="{% if featured_room.local_image %}{% static featured_room.local_image %}{% else %}{{ featured_room.image }}{% endif %}" alt="{{ featured_room.name }}">
+          {% else %}
+            <img src="{% static 'images/studio.jpg' %}" alt="Sandy Hotel & Apartment">
+          {% endif %}
+        </div>
+        <div class="hero-card-secondary">
+          {% if secondary_room %}
+            <img src="{% if secondary_room.local_image %}{% static secondary_room.local_image %}{% else %}{{ secondary_room.image }}{% endif %}" alt="{{ secondary_room.name }}">
+          {% else %}
+            <img src="{% static 'images/deluxe.png' %}" alt="Không gian nghỉ dưỡng">
+          {% endif %}
+        </div>
+        <div class="hero-card-note">
+          <div class="hero-note-label">Dấu ấn nghỉ dưỡng</div>
+          <div class="hero-note-title">Không gian ấm áp, tinh gọn và riêng tư.</div>
+          <div class="hero-note-copy">
+            Vị trí thuận tiện, đủ gần để khám phá, đủ yên để nghỉ ngơi.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="story-section home-section">
+    <div class="section-inner">
+      <div class="section-heading">
+        <div class="section-kicker">Về chúng tôi</div>
+        <h2>Một điểm dừng ấm áp giữa nhịp sống biển Đà Nẵng</h2>
+        <p>
+          Sandy Hotel & Apartment được định hình như một nơi ở dễ chịu: gần biển, nội thất gọn gàng,
+          không gian sáng và dịch vụ vừa đủ để chuyến đi của bạn nhẹ nhàng hơn từ lúc nhận phòng đến khi rời đi.
+        </p>
+      </div>
+
+      <div class="story-layout">
+        <div class="story-copy">
+          <div class="story-panel">
+            <p>
+              Từ vị trí thuận tiện tại An Thượng, bạn có thể nhanh chóng kết nối với biển Mỹ Khê,
+              các quán cà phê, nhà hàng và những điểm tham quan quen thuộc. Bố cục trang chủ được làm lại theo hướng
+              ít rối mắt hơn, tập trung vào cảm giác nghỉ dưỡng mềm, sạch và vừa đủ sang.
+            </p>
+          </div>
+          <div class="story-badges">
+            <div class="story-badge">
+              <strong>Không gian gọn và sáng</strong>
+              <span>Thiết kế ưu tiên ánh sáng tự nhiên, bề mặt ấm và cảm giác thư thái khi ở lâu.</span>
+            </div>
+            <div class="story-badge">
+              <strong>Phù hợp nhiều nhu cầu</strong>
+              <span>Từ lưu trú công tác, nghỉ ngắn ngày cho đến các nhóm gia đình cần phòng rộng hơn.</span>
+            </div>
+            <div class="story-badge">
+              <strong>Chạm biển nhanh</strong>
+              <span>Đi bộ hoặc di chuyển ngắn là đã tới khu vực biển, ăn uống và giải trí sôi động.</span>
+            </div>
+            <div class="story-badge">
+              <strong>Dễ đặt, dễ chọn</strong>
+              <span>Mọi lựa chọn phòng được gom rõ ràng để bạn nhìn một lần là nắm được mức phù hợp.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-visual">
+          <div class="story-frame-main">
+            <img src="{% static 'images/family.jpg' %}" alt="Không gian Sandy Hotel">
+          </div>
+          <div class="story-frame-secondary">
+            <img src="{% static 'images/suite.jpg' %}" alt="Phòng nghỉ Sandy Hotel">
+          </div>
+          <div class="story-quote">
+            “Một nơi ở khiến lịch trình du lịch trở nên nhẹ hơn, chậm hơn và dễ chịu hơn.”
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reasons-section home-section">
+    <div class="section-inner">
+      <div class="section-heading centered">
+        <div class="section-kicker">Vì sao chọn Sandy</div>
+        <h2>Trải nghiệm nghỉ dưỡng được chọn lọc tinh tế</h2>
+        <p>
+          Mọi chi tiết đều hướng đến sự thoải mái, riêng tư và nhịp nghỉ ngơi đúng nghĩa.
+        </p>
+      </div>
+
+      <div class="reasons-grid">
+        <article class="reason-card">
+          <div class="reason-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"></path>
+              <circle cx="12" cy="10" r="2.5"></circle>
+            </svg>
+          </div>
+          <h3>Vị trí thuận tiện</h3>
+          <p>Ở gần khu vực biển, ẩm thực và các tuyến di chuyển chính nên phù hợp cả khách du lịch lẫn khách công tác.</p>
+        </article>
+        <article class="reason-card">
+          <div class="reason-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 13h16"></path>
+              <path d="M6 13V9a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"></path>
+              <path d="M5 17v-2"></path>
+              <path d="M19 17v-2"></path>
+              <path d="M3 17h18"></path>
+            </svg>
+          </div>
+          <h3>Nhịp ở dễ chịu</h3>
+          <p>Không gian được tổ chức gọn gàng, ánh sáng vừa phải, tạo nên một nhịp sinh hoạt nhẹ nhàng và thoải mái suốt thời gian lưu trú.</p>
+        </article>
+        <article class="reason-card">
+          <div class="reason-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3v18"></path>
+              <path d="M17 7.5c0-1.7-1.8-3-4-3s-4 1.3-4 3 1.8 3 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3"></path>
+            </svg>
+          </div>
+          <h3>Tiện nghi vừa đủ</h3>
+          <p>WiFi, điều hòa, minibar và các lựa chọn phòng linh hoạt giúp hành trình lưu trú trọn vẹn hơn mà không bị rối.</p>
+        </article>
+      </div>
+
+      <div class="experience-band">
+        <div>
+          <h3>Tập trung vào trải nghiệm nghỉ ngơi trọn vẹn</h3>
+          <p>
+            Không gian và dịch vụ được sắp xếp hợp lý, giúp bạn dễ dàng tận hưởng kỳ nghỉ một cách thoải mái,
+            liền mạch và không bị phân tán.
+          </p>
+        </div>
+        <div class="experience-chips">
+          <span>Không gian tinh giản</span>
+          <span>Thiết kế hài hòa</span>
+          <span>Trải nghiệm liền mạch</span>
+          <span>Tiện nghi chọn lọc</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rooms-section home-section" id="rooms-section">
+    <div class="section-inner">
+      <div class="rooms-header">
+        <div class="section-heading">
+          <div class="section-kicker">Không gian &amp; tiện nghi</div>
+          <h2>Danh sách hạng phòng</h2>
+          <p>
+            Không gian phòng được bố trí hợp lý, đủ tiện nghi để bạn tận hưởng kỳ nghỉ một cách trọn vẹn và thư thái.
+          </p>
+        </div>
+        <a href="#rooms-section" class="rooms-summary">
+          <strong>{{ available_room_total }}</strong>
+          <span>phòng đang sẵn sàng đón khách trên toàn hệ thống hiện tại.</span>
+        </a>
+      </div>
+
+      <div class="room-grid">
+        {% for room_type in room_types %}
+          <article class="room-card">
+            <div class="room-media">
+              <img src="{% if room_type.local_image %}{% static room_type.local_image %}{% else %}{{ room_type.image }}{% endif %}" alt="{{ room_type.name }}">
+              <div class="room-badge">{{ room_type.available_count }} phòng trống</div>
+            </div>
+            <div class="room-content">
+              <div class="room-meta">{{ room_type.name|upper }}</div>
+              <h3>{{ room_type.name }}</h3>
+              <div class="room-description">{{ room_type.description }}</div>
+
+              <div class="room-amenities">
+                {% for amenity in room_type.amenities %}
+                  <span>{{ amenity }}</span>
+                {% endfor %}
+              </div>
+
+              <div class="room-footer">
+                <div class="room-price">
+                  <strong>{{ room_type.base_price|format_price }} VND</strong>
+                  <span>Giá tham khảo mỗi đêm</span>
+                </div>
+                <a href="/room-type/{{ room_type.id }}/" class="room-link">Xem chi tiết</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
