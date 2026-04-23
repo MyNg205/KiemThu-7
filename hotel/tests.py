@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -102,3 +103,8 @@ class RegisterViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Mật khẩu phải có ít nhất 1 chữ cái và 1 chữ số.')
         self.assertFalse(User.objects.filter(email='customer4@example.com').exists())
+=======
+from django.test import TestCase
+
+# Create your tests here.
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869

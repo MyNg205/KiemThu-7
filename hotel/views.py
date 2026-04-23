@@ -7,25 +7,50 @@ from .models import RoomType, Room, Booking, UserProfile
 from django.http import HttpResponse
 from datetime import date
 from django import forms
+<<<<<<< HEAD
 import re
 # Create your views here.
 
 # Trang chủ: phân biệt staff và customer
 @login_required(login_url='/login/')
 def home(request):
+=======
+# Create your views here.
+
+# Trang chủ: phân biệt staff và customer
+def home(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     # Nếu là staff, redirect tới staff_home
     if request.user.is_staff:
         return redirect('staff_home')
 
     # Khách hàng: hiển thị trang chủ khách hàng với danh sách loại phòng
     room_types = RoomType.objects.all()
+<<<<<<< HEAD
     return render(request, 'home.html', {'room_types': room_types})
+=======
+    
+    # Lấy danh sách phòng khả dụng cho mỗi loại phòng
+    room_types_with_rooms = []
+    for room_type in room_types:
+        available_rooms = Room.objects.filter(room_type=room_type, status='available')
+        room_types_with_rooms.append({
+            'room_type': room_type,
+            'available_rooms': available_rooms,
+            'available_count': available_rooms.count()
+        })
+    
+    return render(request, 'home.html', {'room_types_with_rooms': room_types_with_rooms})
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
 
 # Trang đăng nhập
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
+<<<<<<< HEAD
 
 class RegisterForm(forms.Form):
     full_name = forms.CharField(
@@ -120,6 +145,9 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
 
+=======
+def login_view(request):
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -141,6 +169,7 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+<<<<<<< HEAD
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -170,6 +199,8 @@ def register_view(request):
 
     return render(request, 'register.html', {'form': form})
 
+=======
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
 # Đăng xuất
 def logout_view(request):
     logout(request)
@@ -180,6 +211,13 @@ def logout_view(request):
 def profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
+<<<<<<< HEAD
+=======
+    # Lấy thống kê đặt phòng
+    bookings_count = Booking.objects.filter(user=request.user).count()
+    last_booking = Booking.objects.filter(user=request.user).order_by('-created_at').first()
+
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     if request.method == 'POST':
         request.user.first_name = request.POST.get('first_name', '')
         profile.age = request.POST.get('age', '') or None
@@ -190,7 +228,15 @@ def profile(request):
         messages.success(request, 'Lưu thông tin thành công!')
         return redirect('home')
 
+<<<<<<< HEAD
     return render(request, 'profile.html', {'profile': profile})
+=======
+    return render(request, 'profile.html', {
+        'profile': profile,
+        'bookings_count': bookings_count,
+        'last_booking': last_booking,
+    })
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
 
 # Trang lịch sử đặt phòng
 @login_required(login_url='/login/')
@@ -247,11 +293,21 @@ def book_room(request, room_id=None):
 
     # Tạo list tuple cho room_types select
     room_type_choices = [(rt.id, rt.name) for rt in room_types]
+<<<<<<< HEAD
+=======
+    
+    # Lấy profile của user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
 
     return render(request, 'book_room.html', {
         'room_types': room_type_choices,
         'rooms': rooms,
         'user': user,
+<<<<<<< HEAD
+=======
+        'profile': profile,
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
         'selected_room': selected_room,
         'selected_room_type': selected_room_type,
     })

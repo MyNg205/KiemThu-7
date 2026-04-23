@@ -6,16 +6,25 @@
 <style>
   .profile-container {
     background: white;
+<<<<<<< HEAD
     padding: 30px;
     border-radius: 8px;
     max-width: 600px;
     margin: 0 auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+=======
+    padding: 5%;
+    border-radius: 2%;
+    width: 60vw;
+    margin: 0 auto;
+    box-shadow: 0 1% 3% rgba(0, 0, 0, 0.1);
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 
   .section-title {
     background: #FFFACD;
     border-left: 5px solid #D4AF37;
+<<<<<<< HEAD
     padding: 15px 20px;
     margin: -30px -30px 20px -30px;
     font-weight: bold;
@@ -25,48 +34,90 @@
 
   .form-group {
     margin-bottom: 20px;
+=======
+    padding: 3% 4%;
+    margin: -5% -5% 4% -5%;
+    font-weight: bold;
+    color: #333;
+    font-size: 2vw;
+  }
+
+  .form-group {
+    margin-bottom: 4%;
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
+<<<<<<< HEAD
     gap: 20px;
     margin-bottom: 20px;
+=======
+    gap: 4%;
+    margin-bottom: 4%;
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 
   .form-group label {
     display: block;
     color: #D4AF37;
     font-weight: 600;
+<<<<<<< HEAD
     margin-bottom: 8px;
     font-size: 14px;
+=======
+    margin-bottom: 2%;
+    font-size: 1.5vw;
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 
   .form-group input {
     width: 100%;
+<<<<<<< HEAD
     padding: 12px;
     border: 1px solid #DDD;
     border-radius: 4px;
     font-size: 14px;
+=======
+    padding: 2%;
+    border: 1px solid #DDD;
+    border-radius: 1%;
+    font-size: 1.5vw;
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     font-family: inherit;
   }
 
   .form-group input:focus {
     outline: none;
     border-color: #D4AF37;
+<<<<<<< HEAD
     box-shadow: 0 0 5px rgba(212, 175, 55, 0.2);
+=======
+    box-shadow: 0 0 1% rgba(212, 175, 55, 0.2);
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 
   .btn-save {
     background: #E8A652;
     color: white;
+<<<<<<< HEAD
     padding: 12px 30px;
     border: none;
     border-radius: 4px;
+=======
+    padding: 2% 5%;
+    border: none;
+    border-radius: 1%;
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
     cursor: pointer;
     font-weight: 600;
     transition: background 0.3s;
     float: right;
+<<<<<<< HEAD
+=======
+    font-size: 1.2vw;
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 
   .btn-save:hover {
@@ -79,10 +130,64 @@
     clear: both;
   }
 
+<<<<<<< HEAD
+=======
+  .welcome-section {
+    margin-bottom: 5%;
+    padding: 3%;
+    background: #f9f9f9;
+    border-radius: 2%;
+  }
+
+  .welcome-section h2 {
+    margin: 0 0 2% 0;
+    font-size: 2.5vw;
+    color: #333;
+  }
+
+  .welcome-section p {
+    margin: 0;
+    color: #666;
+  }
+
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15%, 1fr));
+    gap: 4%;
+    margin-bottom: 5%;
+  }
+
+  .stat-item {
+    background: #f1f1f1;
+    padding: 3%;
+    border-radius: 2%;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 2vw;
+    font-weight: bold;
+    color: #D4AF37;
+  }
+
+  .stat-label {
+    margin-top: 1%;
+    color: #666;
+    font-size: 1vw;
+  }
+
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   @media (max-width: 768px) {
     .form-row {
       grid-template-columns: 1fr;
     }
+<<<<<<< HEAD
+=======
+
+    .stats-section {
+      grid-template-columns: 1fr;
+    }
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
   }
 </style>
 {% endblock %}
@@ -90,6 +195,7 @@
 {% block content %}
 <div class="profile-container">
   <div class="section-title">Thông tin cá nhân</div>
+<<<<<<< HEAD
   <form method="post">
     {% csrf_token %}
     <div class="form-row">
@@ -120,3 +226,67 @@
 {% endblock %}
 
 
+=======
+
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h2>👋 Chào mừng, {{ user.first_name|default:user.username }}!</h2>
+    <p>Quản lý thông tin cá nhân và xem thống kê đặt phòng của bạn.</p>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-section">
+    <div class="stat-item">
+      <div class="stat-number">{{ bookings_count }}</div>
+      <div class="stat-label">Tổng số đặt phòng</div>
+    </div>
+    {% if last_booking %}
+      <div class="stat-item">
+        <div class="stat-number">{{ last_booking.room.room_number }}</div>
+        <div class="stat-label">Phòng gần nhất</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">{{ last_booking.check_in|date:"d/m/Y" }}</div>
+        <div class="stat-label">Check-in gần nhất</div>
+      </div>
+    {% else %}
+      <div class="stat-item">
+        <div class="stat-number">—</div>
+        <div class="stat-label">Chưa có đặt phòng</div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <h3>✏️ Cập nhật thông tin</h3>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label>Họ tên</label>
+          <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="Nhập họ tên">
+        </div>
+        <div class="form-group">
+          <label>Tuổi</label>
+          <input type="number" name="age" value="{{ profile.age }}" placeholder="Nhập tuổi">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Số điện thoại</label>
+          <input type="text" name="phone" value="{{ profile.phone }}" placeholder="Nhập số điện thoại">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" value="{{ user.email }}" placeholder="Nhập email">
+        </div>
+      </div>
+      <div class="clearfix">
+        <button type="submit" class="btn-save">Lưu thông tin</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+>>>>>>> be15ac174ec3f04303fa614df98f2bb4f6e9f869
