@@ -18,6 +18,10 @@ CANCELLED_STATUS = "Đã huỷ"
 BOOKED_STATUS = "Đã đặt"
 CHECKED_IN_STATUS = "Đã check in"
 
+
+def is_admin_user(user):
+    return user.is_authenticated and user.is_superuser
+
 ROOM_IMAGE_MAP = {
     "studio": "images/studio.jpg",
     "deluxe": "images/deluxe.png",
@@ -721,12 +725,20 @@ def select_room_to_book(request):
 
 @login_required(login_url="/login/")
 def cancel_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    booking = get_object_or_404(Booking, id=booking_id)
+    if request.user.is_staff:
+        messages.error(request, "Nhân viên không có quyền huỷ đơn đặt phòng.")
+        return redirect("staff_bookings")
+
+    if booking.user != request.user:
+        messages.error(request, "Bạn không có quyền thao tác trên đơn đặt phòng này.")
+        return redirect("home")
+
     if request.method == "POST":
         booking.status = CANCELLED_STATUS
-        booking.save()
+        booking.save(update_fields=["status"])
         booking.room.status = "available"
-        booking.room.save()
+        booking.room.save(update_fields=["status"])
         messages.success(request, "Đã huỷ đặt phòng thành công.")
         return redirect("booking_history")
     return render(request, "cancel_booking.html", {"booking": booking})
@@ -808,19 +820,20 @@ def staff_bookings(request):
     date_from = request.GET.get("date_from", "")
     date_to = request.GET.get("date_to", "")
 
-    bookings = Booking.objects.all()
+    bookings = Booking.objects.select_related("user", "room", "room__room_type")
     if status:
         bookings = bookings.filter(status=status)
     if room_type_id:
         bookings = bookings.filter(room__room_type__id=room_type_id)
     if date_from:
-        bookings = bookings.filter(check_in__date__gte=date_from)
+        bookings = bookings.filter(check_in__gte=date_from)
     if date_to:
-        bookings = bookings.filter(check_out__date__lte=date_to)
+        bookings = bookings.filter(check_out__lte=date_to)
     bookings = bookings.order_by("-created_at")
 
     context = {
         "bookings": bookings,
+        "booking_count": bookings.count(),
         "room_types": room_types,
         "selected_status": status,
         "selected_room_type": room_type_id,
@@ -838,18 +851,33 @@ def staff_rooms(request):
         return redirect("home")
 
     room_types = RoomType.objects.all().order_by("base_price")
+    can_manage_prices = is_admin_user(request.user)
     if request.method == "POST":
+        if not can_manage_prices:
+            messages.error(request, "Bạn không có quyền chỉnh giá phòng.")
+            return redirect("staff_rooms")
+
         updated = False
         for room_type in room_types:
             price_key = f"price_{room_type.id}"
             new_price = request.POST.get(price_key)
-            if new_price is not None and new_price != "" and int(new_price) != room_type.base_price:
-                room_type.base_price = int(new_price)
-                room_type.save()
+            if new_price is None or new_price == "":
+                continue
+            try:
+                parsed_price = int(str(new_price).replace(",", ""))
+            except ValueError:
+                messages.error(request, f"Giá nhập vào cho {room_type.name} không hợp lệ.")
+                return redirect("staff_rooms")
+            if parsed_price < 0:
+                messages.error(request, f"Giá nhập vào cho {room_type.name} không hợp lệ.")
+                return redirect("staff_rooms")
+            if parsed_price != room_type.base_price:
+                room_type.base_price = parsed_price
+                room_type.save(update_fields=["base_price"])
                 updated = True
         if updated:
             messages.success(request, "Đã cập nhật giá phòng thành công!")
         else:
             messages.info(request, "Không có thay đổi nào được lưu.")
         return redirect("staff_rooms")
-    return render(request, "staff_rooms.html", {"room_types": room_types})
+    return render(request, "staff_rooms.html", {"room_types": room_types, "can_manage_prices": can_manage_prices})

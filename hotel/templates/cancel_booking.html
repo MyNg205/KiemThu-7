@@ -115,11 +115,11 @@
   <div class="booking-details">
     <div class="detail-row">
       <span class="detail-label">Phòng:</span>
-      <span class="detail-value">{{ booking.room.name }}</span>
+      <span class="detail-value">Phòng {{ booking.room.room_number }}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Loại:</span>
-      <span class="detail-value">{{ booking.room.get_room_type_display }}</span>
+      <span class="detail-value">{{ booking.room.room_type.name }}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Check-in:</span>
@@ -131,7 +131,7 @@
     </div>
     <div class="detail-row">
       <span class="detail-label">Giá:</span>
-      <span class="detail-value">{{ booking.room.price|format_price }} VND/đêm</span>
+      <span class="detail-value">{{ booking.room.room_type.base_price|format_price }} VND/đêm</span>
     </div>
   </div>
 

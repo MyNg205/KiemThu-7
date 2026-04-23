@@ -337,3 +337,113 @@ class RoomTypeDetailViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "28 m2")
         self.assertContains(response, "Khu bếp nhỏ gọn")
+
+
+class StaffRoomPricePermissionTests(TestCase):
+    def setUp(self):
+        self.room_type = RoomType.objects.create(
+            name="Deluxe",
+            description="Phòng Deluxe",
+            base_price=1700000,
+            capacity=3,
+            bed_count=1,
+            amenities="WiFi,TV,AC",
+        )
+
+        self.staff_user = User.objects.create_user(
+            username="staff@example.com",
+            email="staff@example.com",
+            password="secret123",
+            is_staff=True,
+        )
+
+        self.admin_user = User.objects.create_user(
+            username="admin@example.com",
+            email="admin@example.com",
+            password="secret123",
+            is_staff=True,
+            is_superuser=True,
+        )
+
+    def test_staff_cannot_update_room_prices(self):
+        self.client.login(username="staff@example.com", password="secret123")
+
+        response = self.client.post(
+            reverse("staff_rooms"),
+            {f"price_{self.room_type.id}": "2500000"},
+            follow=True,
+        )
+
+        self.room_type.refresh_from_db()
+
+        self.assertEqual(self.room_type.base_price, 1700000)
+        self.assertContains(response, "Bạn không có quyền chỉnh giá phòng.")
+
+    def test_admin_can_update_room_prices(self):
+        self.client.login(username="admin@example.com", password="secret123")
+
+        response = self.client.post(
+            reverse("staff_rooms"),
+            {f"price_{self.room_type.id}": "2500000"},
+            follow=True,
+        )
+
+        self.room_type.refresh_from_db()
+
+        self.assertEqual(self.room_type.base_price, 2500000)
+        self.assertContains(response, "Đã cập nhật giá phòng thành công!")
+
+
+class StaffBookingDashboardTests(TestCase):
+    def setUp(self):
+        self.staff_user = User.objects.create_user(
+            username="staff@example.com",
+            email="staff@example.com",
+            password="secret123",
+            is_staff=True,
+        )
+        self.customer = User.objects.create_user(
+            username="customer@example.com",
+            email="customer@example.com",
+            password="secret123",
+        )
+        self.room_type = RoomType.objects.create(
+            name="Suite",
+            description="Phòng Suite",
+            base_price=2800000,
+            capacity=4,
+            bed_count=2,
+            amenities="WiFi,TV,AC",
+        )
+        self.room = Room.objects.create(room_type=self.room_type, room_number="901", floor=9, status="available")
+        self.booking = Booking.objects.create(
+            user=self.customer,
+            room=self.room,
+            check_in=date.today() + timedelta(days=2),
+            check_out=date.today() + timedelta(days=5),
+            guest_count=2,
+            special_request="Gần thang máy",
+            status="Đã đặt",
+        )
+
+    def test_staff_bookings_page_renders_modern_dashboard(self):
+        self.client.login(username="staff@example.com", password="secret123")
+
+        response = self.client.get(reverse("staff_bookings"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Quản lý đơn đặt phòng")
+        self.assertContains(response, "Xem chi tiết")
+        self.assertContains(response, "Phòng 901")
+
+    def test_staff_cannot_cancel_booking_from_dashboard(self):
+        self.client.login(username="staff@example.com", password="secret123")
+
+        response = self.client.post(reverse("cancel_booking", args=[self.booking.id]), follow=True)
+
+        self.booking.refresh_from_db()
+        self.room.refresh_from_db()
+
+        self.assertEqual(self.booking.status, "Đã đặt")
+        self.assertEqual(self.room.status, "available")
+        self.assertContains(response, "Nhân viên không có quyền huỷ đơn đặt phòng.")

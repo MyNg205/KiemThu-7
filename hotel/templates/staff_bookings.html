@@ -1,59 +1,578 @@
 {% extends 'base.html' %}
 {% block title %}Quản lý Đơn Đặt Phòng{% endblock %}
+{% block extra_css %}
+<style>
+  .dashboard-page {
+    display: grid;
+    gap: 22px;
+  }
+
+  .dashboard-hero,
+  .panel-card {
+    background: linear-gradient(180deg, #fffdf7 0%, #ffffff 100%);
+    border: 1px solid rgba(212, 175, 55, 0.14);
+    border-radius: 22px;
+    box-shadow: 0 14px 40px rgba(60, 42, 11, 0.08);
+  }
+
+  .dashboard-hero {
+    padding: 26px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-copy h1 {
+    margin: 0;
+    color: #9b6d12;
+    font-size: clamp(26px, 3vw, 36px);
+    letter-spacing: -0.03em;
+  }
+
+  .filter-panel {
+    padding: 18px;
+  }
+
+  .filter-toolbar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    gap: 14px;
+    align-items: end;
+  }
+
+  .field-group {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7d6b46;
+  }
+
+  .field-input,
+  .field-select {
+    width: 100%;
+    border: 1px solid #e7dbc0;
+    background: #fff;
+    border-radius: 14px;
+    padding: 13px 14px;
+    color: #2d2414;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .field-input:focus,
+  .field-select:focus {
+    border-color: #e2a83b;
+    box-shadow: 0 0 0 4px rgba(226, 168, 59, 0.14);
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-soft,
+  .btn-primary,
+  .icon-btn {
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+
+  .btn-soft,
+  .btn-primary {
+    padding: 13px 16px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #dd9f22 0%, #f0be59 100%);
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(221, 159, 34, 0.28);
+  }
+
+  .btn-soft {
+    background: #fff7e7;
+    color: #8b6218;
+    border: 1px solid rgba(221, 159, 34, 0.2);
+  }
+
+  .btn-primary:hover,
+  .btn-soft:hover,
+  .icon-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .table-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  .booking-table {
+    width: 100%;
+    min-width: 1080px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .booking-table thead th {
+    position: sticky;
+    top: 0;
+    background: #fff8e9;
+    color: #7a611a;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 16px 18px;
+    border-bottom: 1px solid #eadfca;
+  }
+
+  .booking-table tbody td {
+    padding: 18px;
+    border-bottom: 1px solid #f0eadc;
+    vertical-align: top;
+    color: #392d1a;
+  }
+
+  .booking-table tbody tr {
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .booking-table tbody tr:hover {
+    background: #fffcf4;
+    box-shadow: inset 0 0 0 9999px rgba(242, 223, 183, 0.16);
+  }
+
+  .booking-code {
+    font-weight: 800;
+    color: #9d6813;
+    font-size: 16px;
+  }
+
+  .meta-primary {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .meta-secondary {
+    color: #85775a;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .status-booked { background: #fff1d3; color: #b47100; }
+  .status-cancelled { background: #ffe3e3; color: #b42318; }
+  .status-checkin { background: #e2f7ea; color: #157f45; }
+  .status-default { background: #eff1f4; color: #46505a; }
+
+  .action-set {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .icon-btn {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #e7dbc0;
+    color: #7b6524;
+    text-decoration: none;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .icon-btn--disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+
+  .empty-state {
+    padding: 56px 24px;
+    text-align: center;
+    color: #816e47;
+  }
+
+  .messages {
+    position: fixed;
+    right: 24px;
+    top: 24px;
+    z-index: 999;
+    display: grid;
+    gap: 10px;
+    max-width: min(420px, calc(100vw - 32px));
+  }
+
+  .messages .alert {
+    border-radius: 16px;
+    box-shadow: 0 16px 30px rgba(33, 24, 7, 0.12);
+    backdrop-filter: blur(6px);
+  }
+
+  .detail-dialog {
+    border: 0;
+    border-radius: 24px;
+    padding: 0;
+    width: min(680px, calc(100vw - 28px));
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    box-shadow: 0 26px 60px rgba(40, 28, 7, 0.28);
+  }
+
+  .detail-dialog::backdrop {
+    background: rgba(26, 18, 7, 0.48);
+    backdrop-filter: blur(2px);
+  }
+
+  .dialog-shell {
+    padding: 24px;
+    background: #fffdf8;
+  }
+
+  .dialog-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .dialog-head h3 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    color: #8d6210;
+  }
+
+  .dialog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .detail-box {
+    border: 1px solid #ede1c9;
+    border-radius: 18px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+
+  .detail-box label {
+    display: block;
+    font-size: 12px;
+    color: #8b7a5a;
+    margin-bottom: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .detail-box div {
+    color: #2f2617;
+    line-height: 1.55;
+  }
+
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .close-dialog {
+    background: #f3ead7;
+    color: #6d5731;
+  }
+
+  @media (max-width: 1024px) {
+    .filter-toolbar {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-actions {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .dashboard-hero,
+    .panel-card {
+      border-radius: 18px;
+    }
+
+    .filter-toolbar,
+    .dialog-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .messages {
+      right: 12px;
+      left: 12px;
+      top: 12px;
+      max-width: none;
+    }
+  }
+</style>
+{% endblock %}
 {% block content %}
-<h2 style="color:#D4AF37;font-weight:bold;">Quản lý Đơn Đặt Phòng</h2>
-<form method="get" style="margin-bottom:20px;">
-  <div class="filter-bar">
-    <label for="status" class="filter-label">🔎 Trạng thái:</label>
-    <select name="status" id="status" class="filter-select" onchange="this.form.submit()">
-      <option value="">Tất cả</option>
-      {% for s in statuses %}
-        <option value="{{ s }}" {% if selected_status == s %}selected{% endif %}>{{ s }}</option>
-      {% endfor %}
-    </select>
+<div class="dashboard-page">
+  <section class="dashboard-hero">
+    <div class="hero-copy">
+      <h1>Quản lý đơn đặt phòng</h1>
+    </div>
+  </section>
 
-    <label for="room_type" class="filter-label">Loại phòng:</label>
-    <select name="room_type" id="room_type" class="filter-select" onchange="this.form.submit()">
-      <option value="">Tất cả</option>
-      {% for rt in room_types %}
-        <option value="{{ rt.id }}" {% if selected_room_type == rt.id|stringformat:'s' %}selected{% endif %}>{{ rt.name }}</option>
-      {% endfor %}
-    </select>
+  <section class="panel-card filter-panel">
+    <form method="get">
+      <div class="filter-toolbar">
+        <div class="field-group">
+          <label class="field-label" for="status">Trạng thái</label>
+          <select name="status" id="status" class="field-select" onchange="this.form.submit()">
+            <option value="">Tất cả</option>
+            {% for s in statuses %}
+              <option value="{{ s }}" {% if selected_status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <label for="date_from" class="filter-label">Từ ngày:</label>
-    <input type="date" name="date_from" id="date_from" class="filter-select" value="{{ selected_date_from }}" onchange="this.form.submit()" style="min-width:120px;">
+        <div class="field-group">
+          <label class="field-label" for="room_type">Loại phòng</label>
+          <select name="room_type" id="room_type" class="field-select" onchange="this.form.submit()">
+            <option value="">Tất cả</option>
+            {% for rt in room_types %}
+              <option value="{{ rt.id }}" {% if selected_room_type == rt.id|stringformat:'s' %}selected{% endif %}>{{ rt.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <label for="date_to" class="filter-label">Đến ngày:</label>
-    <input type="date" name="date_to" id="date_to" class="filter-select" value="{{ selected_date_to }}" onchange="this.form.submit()" style="min-width:120px;">
+        <div class="field-group">
+          <label class="field-label" for="date_from">Từ ngày</label>
+          <input type="date" name="date_from" id="date_from" class="field-input" value="{{ selected_date_from }}" onchange="this.form.submit()">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="date_to">Đến ngày</label>
+          <input type="date" name="date_to" id="date_to" class="field-input" value="{{ selected_date_to }}" onchange="this.form.submit()">
+        </div>
+
+        <div class="filter-actions">
+          <a href="{% url 'staff_bookings' %}" class="btn-soft">Xóa lọc</a>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel-card table-card">
+    <div class="table-wrap">
+      <table class="booking-table">
+        <thead>
+          <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Phòng</th>
+            <th>Lưu trú</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+            <tr>
+              <td>
+                <div class="booking-code">#{{ b.id }}</div>
+              </td>
+              <td>
+                <div class="meta-primary">{{ b.user.first_name|default:"Chưa cập nhật tên" }}</div>
+                <div class="meta-secondary">{{ b.user.email }}</div>
+              </td>
+              <td>
+                <div class="meta-primary">Phòng {{ b.room.room_number }}</div>
+                <div class="meta-secondary">{{ b.room.room_type.name }}</div>
+              </td>
+              <td>
+                <div class="meta-primary">{{ b.check_in|date:'d/m/Y' }} - {{ b.check_out|date:'d/m/Y' }}</div>
+                <div class="meta-secondary">Tạo lúc {{ b.created_at|date:'d/m/Y H:i' }}</div>
+              </td>
+              <td>
+                <span class="status-pill {% if b.status == 'Đã đặt' %}status-booked{% elif b.status == 'Đã huỷ' %}status-cancelled{% elif b.status == 'Đã check in' %}status-checkin{% else %}status-default{% endif %}">
+                  {{ b.status }}
+                </span>
+              </td>
+              <td>
+                <div class="meta-primary">{{ b.created_at|date:'d/m/Y' }}</div>
+                <div class="meta-secondary">{{ b.created_at|date:'H:i' }}</div>
+              </td>
+              <td>
+                <div class="action-set">
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    aria-label="Xem chi tiết"
+                    data-open-booking-detail
+                    data-booking-id="{{ b.id }}"
+                    data-booking-status="{{ b.status|escape }}"
+                    data-booking-guest="{{ b.user.first_name|default:'Chưa cập nhật tên'|escape }}"
+                    data-booking-email="{{ b.user.email|escape }}"
+                    data-booking-room="Phòng {{ b.room.room_number }} - {{ b.room.room_type.name|escape }}"
+                    data-booking-dates="{{ b.check_in|date:'d/m/Y' }} - {{ b.check_out|date:'d/m/Y' }}"
+                    data-booking-created="{{ b.created_at|date:'d/m/Y H:i' }}"
+                    data-booking-guests="{{ b.guest_count }}"
+                    data-booking-request="{{ b.special_request|default:'Không có ghi chú'|escape }}"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+
+                  <button type="button" class="icon-btn icon-btn--disabled" aria-label="Chỉnh sửa" title="Chức năng chỉnh sửa sẽ được bổ sung sau" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="m16.5 3.5 4 4L7 21H3v-4Z"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">Không có đơn đặt phòng nào phù hợp với bộ lọc hiện tại.</div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<dialog class="detail-dialog" id="booking-detail-dialog">
+  <div class="dialog-shell">
+    <div class="dialog-head">
+      <div>
+        <h3 id="detail-title">Chi tiết đơn đặt phòng</h3>
+        <p class="meta-secondary" id="detail-subtitle"></p>
+      </div>
+      <button type="button" class="icon-btn close-dialog" id="close-booking-detail" aria-label="Đóng">✕</button>
+    </div>
+
+    <div class="dialog-grid">
+      <div class="detail-box">
+        <label>Mã đơn</label>
+        <div id="detail-id"></div>
+      </div>
+      <div class="detail-box">
+        <label>Trạng thái</label>
+        <div id="detail-status"></div>
+      </div>
+      <div class="detail-box">
+        <label>Khách hàng</label>
+        <div id="detail-guest"></div>
+      </div>
+      <div class="detail-box">
+        <label>Email</label>
+        <div id="detail-email"></div>
+      </div>
+      <div class="detail-box">
+        <label>Phòng</label>
+        <div id="detail-room"></div>
+      </div>
+      <div class="detail-box">
+        <label>Lưu trú</label>
+        <div id="detail-dates"></div>
+      </div>
+      <div class="detail-box">
+        <label>Số khách</label>
+        <div id="detail-guests"></div>
+      </div>
+      <div class="detail-box">
+        <label>Ngày tạo</label>
+        <div id="detail-created"></div>
+      </div>
+      <div class="detail-box" style="grid-column: 1 / -1;">
+        <label>Ghi chú đặc biệt</label>
+        <div id="detail-request"></div>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <button type="button" class="btn-soft close-dialog" id="close-booking-detail-secondary">Đóng</button>
+    </div>
   </div>
-</form>
-<table style="width:100%;background:#fff;border-collapse:collapse;">
-  <thead style="background:#f7f7e6;">
-    <tr>
-      <th style="border:1px solid #ccc;padding:8px;">Mã Đơn</th>
-      <th style="border:1px solid #ccc;padding:8px;">Khách</th>
-      <th style="border:1px solid #ccc;padding:8px;">Phòng</th>
-      <th style="border:1px solid #ccc;padding:8px;">Check-in</th>
-      <th style="border:1px solid #ccc;padding:8px;">Check-out</th>
-      <th style="border:1px solid #ccc;padding:8px;">Trạng thái</th>
-      <th style="border:1px solid #ccc;padding:8px;">Ngày tạo</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for b in bookings %}
-    <tr>
-      <td style="border:1px solid #ccc;padding:8px;">{{ b.id }}</td>
-      <td style="border:1px solid #ccc;padding:8px;">{{ b.user.first_name }}<br>{{ b.user.email }}</td>
-      <td style="border:1px solid #ccc;padding:8px;">Phòng {{ b.room.room_number }} - {{ b.room.room_type.name }}</td>
-      <td style="border:1px solid #ccc;padding:8px;">{{ b.check_in }}</td>
-      <td style="border:1px solid #ccc;padding:8px;">{{ b.check_out }}</td>
-      <td style="border:1px solid #ccc;padding:8px;">{{ b.status }}</td>
-      <td style="border:1px solid #ccc;padding:8px;">{{ b.created_at|date:'d/m/Y H:i' }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="7" style="text-align:center;">Không có đơn đặt phòng nào.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('booking-detail-dialog');
+  const detailFields = {
+    title: document.getElementById('detail-title'),
+    subtitle: document.getElementById('detail-subtitle'),
+    id: document.getElementById('detail-id'),
+    status: document.getElementById('detail-status'),
+    guest: document.getElementById('detail-guest'),
+    email: document.getElementById('detail-email'),
+    room: document.getElementById('detail-room'),
+    dates: document.getElementById('detail-dates'),
+    guests: document.getElementById('detail-guests'),
+    created: document.getElementById('detail-created'),
+    request: document.getElementById('detail-request'),
+  };
+
+  document.querySelectorAll('[data-open-booking-detail]').forEach((button) => {
+    button.addEventListener('click', () => {
+      detailFields.title.textContent = `Chi tiết đơn #${button.dataset.bookingId}`;
+      detailFields.subtitle.textContent = button.dataset.bookingRoom;
+      detailFields.id.textContent = `#${button.dataset.bookingId}`;
+      detailFields.status.textContent = button.dataset.bookingStatus;
+      detailFields.guest.textContent = button.dataset.bookingGuest;
+      detailFields.email.textContent = button.dataset.bookingEmail;
+      detailFields.room.textContent = button.dataset.bookingRoom;
+      detailFields.dates.textContent = button.dataset.bookingDates;
+      detailFields.guests.textContent = `${button.dataset.bookingGuests} khách`;
+      detailFields.created.textContent = button.dataset.bookingCreated;
+      detailFields.request.textContent = button.dataset.bookingRequest;
+      dialog.showModal();
+    });
+  });
+
+  function closeDialog() {
+    if (dialog.open) {
+      dialog.close();
+    }
+  }
+
+  document.getElementById('close-booking-detail').addEventListener('click', closeDialog);
+  document.getElementById('close-booking-detail-secondary').addEventListener('click', closeDialog);
+</script>
 {% endblock %}
 

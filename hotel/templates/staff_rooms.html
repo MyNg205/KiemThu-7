@@ -4,179 +4,391 @@
 
 {% block extra_css %}
 <style>
-  .page-header {
-    background: white;
-    border-left: 5px solid #D4AF37;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-  }
-
-  .page-header h1 {
-    color: #D4AF37;
-    margin: 0;
-    font-size: 28px;
-  }
-
-  .rooms-grid {
+  .pricing-page {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: 22px;
+  }
+
+  .hero-card,
+  .panel-card,
+  .action-card {
+    background: linear-gradient(180deg, #fffdf7 0%, #ffffff 100%);
+    border: 1px solid rgba(212, 175, 55, 0.14);
+    border-radius: 24px;
+    box-shadow: 0 14px 40px rgba(60, 42, 11, 0.08);
+  }
+
+  .hero-card {
+    padding: 26px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-copy h1 {
+    margin: 0;
+    color: #9b6d12;
+    font-size: clamp(26px, 3vw, 36px);
+    letter-spacing: -0.03em;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
   }
 
   .room-card {
-    background: white;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #D4AF37;
-    transition: all 0.3s ease;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #fffdfa 100%);
+    border: 1px solid #f0e4c8;
+    box-shadow: 0 12px 30px rgba(56, 41, 12, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .room-card:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(56, 41, 12, 0.1);
+  }
+
+  .room-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
   }
 
   .room-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: #D4AF37;
-    margin-bottom: 15px;
+    margin: 0;
+    font-size: 24px;
+    color: #8e6514;
+    letter-spacing: -0.02em;
   }
 
-  .price-section {
-    background: #FFFACD;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    display: flex;
+  .room-tag {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #f7f2e4;
+    color: #8f7440;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .price-card {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fff4d6 0%, #fffaf0 100%);
+    border: 1px solid rgba(232, 166, 82, 0.22);
   }
 
   .price-label {
-    color: #666;
+    color: #7f6b48;
     font-size: 13px;
-    margin-bottom: 5px;
+    font-weight: 700;
   }
 
   .price-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #E8A652;
-    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    color: #cf8a1a;
+    font-size: clamp(28px, 2.3vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
   }
 
   .price-unit {
-    font-size: 12px;
-    color: #999;
-    margin-left: 2px;
+    color: #9b8b6d;
+    font-size: 13px;
+    font-weight: 700;
   }
 
-  .price-input-group {
+  .room-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .meta-pill {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #eee2c8;
+    color: #5e5134;
+  }
+
+  .meta-pill strong {
+    display: block;
+    color: #2e2618;
+    margin-top: 4px;
+  }
+
+  .price-field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7d6b46;
+  }
+
+  .input-shell {
     display: flex;
-    gap: 10px;
     align-items: center;
-    margin-top: 10px;
+    gap: 10px;
+    padding: 0 14px;
+    border: 1px solid #e7dbc0;
+    background: #fff;
+    border-radius: 16px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .input-shell:focus-within {
+    border-color: #e2a83b;
+    box-shadow: 0 0 0 4px rgba(226, 168, 59, 0.14);
+  }
+
+  .money-prefix {
+    color: #c58b18;
+    font-size: 20px;
+    font-weight: 800;
   }
 
   .price-input {
     flex: 1;
-    padding: 10px;
-    border: 2px solid #DDD;
-    border-radius: 6px;
-    font-size: 14px;
-  }
-
-  .price-input:focus {
+    border: 0;
     outline: none;
-    border-color: #D4AF37;
+    padding: 14px 0;
+    font-size: 15px;
+    color: #2f2617;
+    background: transparent;
+    min-width: 0;
   }
 
-  .btn-save-all {
-    background: #D4AF37;
-    color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
+  .price-input:disabled {
+    color: #8f8472;
+    cursor: not-allowed;
+  }
+
+  .helper-text {
+    color: #8c7a55;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .action-card {
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .save-btn,
+  .secondary-btn {
+    border: 0;
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s;
-    margin-top: 20px;
-    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .btn-save-all:hover {
-    background: #E8A652;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  .save-btn {
+    background: linear-gradient(135deg, #dd9f22 0%, #f0be59 100%);
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(221, 159, 34, 0.28);
+  }
+
+  .secondary-btn {
+    background: #fff7e7;
+    color: #8b6218;
+    border: 1px solid rgba(221, 159, 34, 0.2);
+  }
+
+  .save-btn:hover,
+  .secondary-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .save-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
   }
 
   .messages {
-    margin-bottom: 20px;
+    position: fixed;
+    right: 24px;
+    top: 24px;
+    z-index: 999;
+    display: grid;
+    gap: 10px;
+    max-width: min(420px, calc(100vw - 32px));
+  }
+
+  .messages .alert {
+    border-radius: 16px;
+    box-shadow: 0 16px 30px rgba(33, 24, 7, 0.12);
+    backdrop-filter: blur(6px);
+  }
+
+  .access-note {
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #f8f0dc;
+    color: #84651b;
+    border: 1px solid #ebd7aa;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 920px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .hero-card,
+    .panel-card,
+    .action-card {
+      border-radius: 18px;
+    }
+
+    .room-meta {
+      grid-template-columns: 1fr;
+    }
+
+    .messages {
+      right: 12px;
+      left: 12px;
+      top: 12px;
+      max-width: none;
+    }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <h1>💰 Quản lý Giá Phòng</h1>
-</div>
-<div class="messages">
-  {% if messages %}
-    {% for message in messages %}
-      <div style="background:#FFF8E1;border-left:4px solid #D4AF37;padding:10px 18px;margin-bottom:8px;border-radius:6px;color:#B8860B;font-weight:500;">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-</div>
-<form method="post" id="price-form">
-  {% csrf_token %}
-  <div class="rooms-grid">
-    {% for rt in room_types %}
-      <div class="room-card">
-        <div class="room-name">{{ rt.name }}</div>
-        <div class="price-section">
-          <span class="price-label">Giá hiện tại:</span>
-          <span class="price-value">{{ rt.base_price|intcomma }}<span class="price-unit"> VND/đêm</span></span>
-        </div>
-        <div class="price-input-group">
-          <label for="price_{{ rt.id }}" style="flex: 1; color: #666; font-size: 13px;">Cập nhật giá mới:</label>
-          <input type="text" id="price_{{ rt.id }}" name="price_{{ rt.id }}" value="{{ rt.base_price|intcomma }}" min="0" class="price-input price-format" placeholder="Nhập giá mới">
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-  <button type="submit" class="btn-save-all">Lưu tất cả thay đổi</button>
-</form>
-<script>
-// Format input with comma as thousands separator
-function formatNumber(n) {
-  return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+<div class="pricing-page">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <h1>Quản lý phòng - giá</h1>
+    </div>
+  </section>
 
-document.querySelectorAll('.price-format').forEach(function(input) {
-  input.addEventListener('input', function(e) {
-    let cursor = input.selectionStart;
-    let value = input.value.replace(/,/g, '');
-    if (value) {
-      input.value = Number(value).toLocaleString('en-US');
-    } else {
-      input.value = '';
+  <form method="post" id="price-form">
+    {% csrf_token %}
+    <section class="panel-card">
+      <div class="pricing-grid">
+        {% for rt in room_types %}
+          <article class="room-card">
+            <div class="room-card-head">
+              <div>
+                <h2 class="room-name">{{ rt.name }}</h2>
+                <div class="helper-text">Thiết lập giá, hiển thị rõ ràng và đồng bộ theo phong cách quản trị khách sạn.</div>
+              </div>
+              <span class="room-tag">Hạng phòng</span>
+            </div>
+
+            <div class="price-card">
+              <div class="price-label">Giá hiện tại</div>
+              <div class="price-value">{{ rt.base_price|intcomma }} <span class="price-unit">VND/đêm</span></div>
+            </div>
+
+            <div class="room-meta">
+              <div class="meta-pill">Sức chứa<strong>{{ rt.capacity }} khách</strong></div>
+              <div class="meta-pill">Số giường<strong>{{ rt.bed_count }}</strong></div>
+            </div>
+
+            <div class="price-field">
+              <label class="field-label" for="price_{{ rt.id }}">Cập nhật giá mới</label>
+              <div class="input-shell" title="{% if can_manage_prices %}Nhập giá mới theo VND{% else %}Bạn không có quyền chỉnh giá{% endif %}">
+                <span class="money-prefix">₫</span>
+                <input
+                  type="text"
+                  id="price_{{ rt.id }}"
+                  name="price_{{ rt.id }}"
+                  value="{{ rt.base_price|intcomma }}"
+                  inputmode="numeric"
+                  class="price-input price-format"
+                  placeholder="Nhập giá mới"
+                  {% if not can_manage_prices %}disabled aria-disabled="true"{% endif %}
+                >
+              </div>
+              {% if not can_manage_prices %}
+                <div class="helper-text">Bạn không có quyền chỉnh giá phòng. Hãy liên hệ Admin nếu cần thay đổi.</div>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="action-card">
+      <div class="helper-text">
+        {% if can_manage_prices %}
+          Nút lưu sẽ cập nhật toàn bộ giá thay đổi trong một lần.
+        {% else %}
+          Chế độ chỉ xem dành cho Nhân viên. Giá phòng chỉ được chỉnh bởi Admin.
+        {% endif %}
+      </div>
+
+      {% if can_manage_prices %}
+        <button type="submit" class="save-btn">Lưu tất cả thay đổi</button>
+      {% else %}
+        <button type="button" class="save-btn" disabled>Lưu tất cả thay đổi</button>
+      {% endif %}
+    </section>
+  </form>
+</div>
+
+<script>
+  const canManagePrices = {{ can_manage_prices|yesno:'true,false' }};
+
+  if (canManagePrices) {
+    function formatNumber(value) {
+      return value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
-    input.setSelectionRange(cursor, cursor);
+
+    document.querySelectorAll('.price-format').forEach((input) => {
+      input.addEventListener('input', () => {
+        const value = input.value.replace(/,/g, '');
+        input.value = value ? Number(value).toLocaleString('en-US') : '';
+      });
+    });
+
+    document.getElementById('price-form').addEventListener('submit', () => {
+      document.querySelectorAll('.price-format').forEach((input) => {
+        input.value = input.value.replace(/,/g, '');
+      });
+    });
+  }
+
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.messages .alert').forEach((message) => {
+      setTimeout(() => {
+        message.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        message.style.opacity = '0';
+        message.style.transform = 'translateY(-6px)';
+      }, 3500);
+    });
   });
-});
-// Remove commas before submit
-const form = document.getElementById('price-form');
-form.addEventListener('submit', function(e) {
-  document.querySelectorAll('.price-format').forEach(function(input) {
-    input.value = input.value.replace(/,/g, '');
-  });
-});
 </script>
 {% endblock %}
