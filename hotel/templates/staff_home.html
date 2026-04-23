@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Trang chủ nhân viên{% endblock %}
+
+{% block extra_css %}
+<style>
+  .staff-dashboard {
+    display: grid;
+    gap: 24px;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .metric-card {
+    background: white;
+    border-radius: 20px;
+    padding: 22px 20px;
+    border: 1px solid rgba(212, 175, 55, 0.12);
+    box-shadow: 0 10px 24px rgba(80, 68, 42, 0.08);
+  }
+
+  .metric-label {
+    color: #8d7c53;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .metric-value {
+    color: #D4AF37;
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .metric-detail {
+    color: #655f55;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .section-card {
+    background: white;
+    border-radius: 22px;
+    padding: 24px;
+    border: 1px solid rgba(212, 175, 55, 0.12);
+    box-shadow: 0 12px 28px rgba(80, 68, 42, 0.08);
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.7fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .section-head h2 {
+    color: #6d5312;
+    font-size: 24px;
+    margin: 0;
+  }
+
+  .section-head p {
+    color: #7a7467;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 6px;
+  }
+
+  .section-link {
+    color: #B8871A;
+    text-decoration: none;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .section-link:hover {
+    color: #996c0f;
+  }
+
+  .bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .bookings-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    background: #FFF9DF;
+    color: #8b6b1f;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .bookings-table thead th:first-child {
+    border-top-left-radius: 14px;
+  }
+
+  .bookings-table thead th:last-child {
+    border-top-right-radius: 14px;
+  }
+
+  .bookings-table tbody td {
+    padding: 16px 14px;
+    border-bottom: 1px solid #F0E7D4;
+    color: #544d43;
+    font-size: 14px;
+    vertical-align: top;
+  }
+
+  .bookings-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .booking-guest {
+    font-weight: 700;
+    color: #5f4b16;
+    margin-bottom: 4px;
+  }
+
+  .booking-meta {
+    color: #8a8478;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .status-booked {
+    background: #FFF3CD;
+    color: #8A6D12;
+  }
+
+  .status-cancelled {
+    background: #FDE2E1;
+    color: #A63D38;
+  }
+
+  .status-checkin {
+    background: #DFF3E4;
+    color: #1F6F43;
+  }
+
+  .status-default {
+    background: #EEEAE0;
+    color: #695f4e;
+  }
+
+  .empty-state {
+    padding: 26px 20px;
+    border-radius: 16px;
+    background: #FFFBEA;
+    color: #776948;
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  .hotel-card {
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .hotel-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hotel-card-body {
+    padding: 20px 22px 22px;
+  }
+
+  .hotel-card-body h3 {
+    color: #6d5312;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .hotel-card-body p {
+    color: #716a5d;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 1080px) {
+    .metrics-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .section-card {
+      padding: 20px;
+    }
+
+    .metrics-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bookings-table,
+    .bookings-table thead,
+    .bookings-table tbody,
+    .bookings-table th,
+    .bookings-table td,
+    .bookings-table tr {
+      display: block;
+    }
+
+    .bookings-table thead {
+      display: none;
+    }
+
+    .bookings-table tbody tr {
+      padding: 14px 0;
+      border-bottom: 1px solid #F0E7D4;
+    }
+
+    .bookings-table tbody td {
+      border: none;
+      padding: 6px 0;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="staff-dashboard">
+  <section class="metrics-grid">
+    <article class="metric-card">
+      <div class="metric-label">Tổng đơn đặt</div>
+      <div class="metric-value">{{ total_bookings }}</div>
+      <div class="metric-detail">Toàn bộ booking đã được tạo trong hệ thống đến thời điểm hiện tại.</div>
+    </article>
+    <article class="metric-card">
+      <div class="metric-label">Đơn cần theo dõi</div>
+      <div class="metric-value">{{ pending_bookings }}</div>
+      <div class="metric-detail">Các đơn chưa hủy và chưa hoàn tất check-in, cần nhân viên tiếp tục xử lý.</div>
+    </article>
+    <article class="metric-card">
+      <div class="metric-label">Phòng sẵn sàng</div>
+      <div class="metric-value">{{ available_rooms }}</div>
+      <div class="metric-detail">Số phòng hiện có thể nhận đặt ngay mà không cần điều phối thêm.</div>
+    </article>
+    <article class="metric-card">
+      <div class="metric-label">Phòng đang sử dụng</div>
+      <div class="metric-value">{{ occupied_rooms }}</div>
+      <div class="metric-detail">Những phòng đang có khách lưu trú hoặc đã được khóa trạng thái sử dụng.</div>
+    </article>
+  </section>
+
+  <section class="content-grid">
+    <article class="section-card">
+      <div class="section-head">
+        <div>
+          <h2>Đơn đặt gần đây</h2>
+          <p>Xem nhanh các booking mới nhất để kiểm tra tình trạng và thông tin khách.</p>
+        </div>
+        <a href="{% url 'staff_bookings' %}" class="section-link">Xem tất cả</a>
+      </div>
+
+      {% if bookings %}
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Phòng</th>
+              <th>Lưu trú</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for booking in bookings|slice:":5" %}
+              <tr>
+                <td>#{{ booking.id }}</td>
+                <td>
+                  <div class="booking-guest">{{ booking.user.first_name|default:"Chưa cập nhật tên" }}</div>
+                  <div class="booking-meta">{{ booking.user.email }}</div>
+                </td>
+                <td>
+                  <div class="booking-guest">Phòng {{ booking.room.room_number }}</div>
+                  <div class="booking-meta">{{ booking.room.room_type.name }}</div>
+                </td>
+                <td>
+                  <div>{{ booking.check_in|date:'d/m/Y' }} - {{ booking.check_out|date:'d/m/Y' }}</div>
+                  <div class="booking-meta">Tạo lúc {{ booking.created_at|date:'d/m/Y H:i' }}</div>
+                </td>
+                <td>
+                  <span class="status-pill {% if booking.status == 'Đã đặt' %}status-booked{% elif booking.status == 'Đã huỷ' %}status-cancelled{% elif booking.status == 'Đã check in' %}status-checkin{% else %}status-default{% endif %}">
+                    {{ booking.status }}
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="empty-state">Chưa có đơn đặt phòng nào được tạo. Khi có booking mới, danh sách gần đây sẽ hiển thị tại đây.</div>
+      {% endif %}
+    </article>
+
+    <aside class="section-card hotel-card">
+      <img src="{% static 'images/register-logo.png' %}" alt="Sandy Hotel & Apartment">
+      <div class="hotel-card-body">
+        <h3>Sandy Hotel & Apartment</h3>
+        <p>Không gian khách sạn được đặt cạnh bảng điều hành để trang nhân viên bớt trống nhưng vẫn giữ bố cục gọn và tập trung vào vận hành.</p>
+      </div>
+    </aside>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+
+{% load price_filters %}
+
+{% block title %}Đặt phòng - Sandy Hotel & Apartment{% endblock %}
+
+{% block extra_css %}
+<style>
+  .book-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .book-header {
+    background: linear-gradient(135deg, #FFF8DC 0%, #FFFACD 100%);
+    border-bottom: 2px solid #D4AF37;
+    padding: 25px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .book-header h2 {
+    color: #D4AF37;
+    font-size: 28px;
+    margin: 0;
+  }
+
+  .book-header p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .book-body {
+    padding: 30px;
+  }
+
+  .form-section {
+    margin-bottom: 30px;
+  }
+
+  .form-section-title {
+    color: #D4AF37;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FFFACD;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+
+  .form-row.full {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    color: #D4AF37;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px;
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #F9F9F9;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #D4AF37;
+    background: white;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.2);
+  }
+
+  .room-info-box {
+    background: #FFF8DC;
+    border-left: 5px solid #D4AF37;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    display: none;
+  }
+
+  .room-info-box.active {
+    display: block;
+  }
+
+  .room-info-box p {
+    color: #333;
+    font-size: 14px;
+    margin: 5px 0;
+  }
+
+  .room-info-box strong {
+    color: #D4AF37;
+  }
+
+  .room-info-image {
+    width: 100%;
+    height: 200px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    object-fit: cover;
+    background: #EEE;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #DDD;
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-book {
+    background: #E8A652;
+    color: white;
+    flex: 1;
+  }
+
+  .btn-book:hover {
+    background: #D39441;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(232, 166, 82, 0.3);
+  }
+
+  .btn-cancel {
+    background: #DDD;
+    color: #666;
+    flex: 1;
+  }
+
+  .btn-cancel:hover {
+    background: #CCC;
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .book-body {
+      padding: 20px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="book-container">
+  <div class="book-header">
+    <h2>📅 Đặt phòng</h2>
+    <p>Chọn loại phòng, phòng và nhập thông tin đặt phòng</p>
+  </div>
+  <div class="book-body">
+    <form method="post" id="bookingForm">
+      {% csrf_token %}
+      <div class="form-section">
+        <div class="form-section-title">Chọn phòng</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="roomType">Loại phòng</label>
+            <select id="roomType" name="room_type" onchange="filterRooms()" required>
+              <option value="">-- Chọn loại phòng --</option>
+              {% for value, label in room_types %}
+                <option value="{{ value }}"{% if selected_room_type.id == value %} selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="roomId">Phòng</label>
+            <select id="roomId" name="room_id" onchange="showRoomInfo()" required>
+              <option value="">-- Chọn phòng --</option>
+              {% for room in rooms %}
+                <option value="{{ room.id }}" data-type="{{ room.room_type.id }}" data-name="{{ room.room_number }}" data-price="{{ room.room_type.base_price }}" data-capacity="{{ room.room_type.capacity }}" data-image="{{ room.room_type.image }}" data-description="{{ room.room_type.description }}"{% if selected_room.id == room.id %} selected{% endif %}>
+                  Phòng {{ room.room_number }} - {{ room.room_type.name }} ({{ room.room_type.base_price|format_price }} VND/đêm)
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="room-info-box" id="roomInfoBox">
+          <img src="" alt="Room" class="room-info-image" id="roomImage">
+          <p><strong>Tên phòng:</strong> <span id="roomName">-</span></p>
+          <p><strong>Loại:</strong> <span id="roomTypeText">-</span></p>
+          <p><strong>Giá:</strong> <span id="roomPrice">-</span></p>
+          <p><strong>Sức chứa:</strong> <span id="roomCapacity">-</span></p>
+          <p><strong>Mô tả:</strong> <span id="roomDescription">-</span></p>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Thông tin cá nhân</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Họ tên</label>
+            <input type="text" name="name" value="{{ user.first_name }}" placeholder="Nhập họ tên" required>
+          </div>
+          <div class="form-group">
+            <label>Tuổi</label>
+            <input type="number" name="age" placeholder="Nhập tuổi" min="1" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="tel" name="phone" placeholder="Nhập số điện thoại" required>
+          </div>
+          <div class="form-group">
+            <label>Số người</label>
+            <input type="number" name="guests" value="1" min="1" max="10" required>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Ngày đặt phòng</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Check-in</label>
+            <input type="date" name="check_in" required>
+          </div>
+          <div class="form-group">
+            <label>Check-out</label>
+            <input type="date" name="check_out" required>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <a href="/" class="btn btn-cancel">Quay lại</a>
+        <button type="submit" class="btn btn-book">🔒 Xác nhận đặt phòng</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  function filterRooms() {
+    const roomTypeId = document.getElementById('roomType').value;
+    const roomSelect = document.getElementById('roomId');
+    const options = roomSelect.querySelectorAll('option');
+    options.forEach(option => {
+      if (option.value === '') {
+        option.style.display = 'block';
+      } else {
+        if (roomTypeId === '') {
+          option.style.display = 'block';
+        } else {
+          option.style.display = option.dataset.type == roomTypeId ? 'block' : 'none';
+        }
+      }
+    });
+    roomSelect.value = '';
+    document.getElementById('roomInfoBox').classList.remove('active');
+  }
+
+  function showRoomInfo() {
+    const select = document.getElementById('roomId');
+    const option = select.options[select.selectedIndex];
+    if (option.value === '') {
+      document.getElementById('roomInfoBox').classList.remove('active');
+      return;
+    }
+    document.getElementById('roomImage').src = option.dataset.image;
+    document.getElementById('roomName').textContent = 'Phòng ' + option.dataset.name;
+    document.getElementById('roomTypeText').textContent = option.text.split(' - ')[1].split(' (')[0];
+    document.getElementById('roomPrice').textContent = parseInt(option.dataset.price).toLocaleString('vi-VN') + ' VND/đêm';
+    document.getElementById('roomCapacity').textContent = option.dataset.capacity + ' người';
+    document.getElementById('roomDescription').textContent = option.dataset.description;
+    document.getElementById('roomInfoBox').classList.add('active');
+  }
+
+  // Auto-display room info if a room is pre-selected
+  window.addEventListener('load', function() {
+    const roomTypeSelect = document.getElementById('roomType');
+    const roomSelect = document.getElementById('roomId');
+
+    // Nếu có phòng được chọn sẵn
+    if (roomSelect.value !== '') {
+      // Cập nhật loại phòng
+      const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+      roomTypeSelect.value = selectedOption.dataset.type;
+      showRoomInfo();
+    }
+  });
+</script>
+{% endblock %}
+
+

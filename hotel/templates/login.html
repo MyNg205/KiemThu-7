@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - Sandy Hotel & Apartment</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #FFF8DC 0%, #FFFACD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border: 3px solid #D4AF37;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      padding: 50px 40px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 30px;
+      background: #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 6px;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+    }
+
+    h1 {
+      color: #D4AF37;
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: #D4AF37;
+      font-size: 16px;
+      font-style: italic;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      color: #D4AF37;
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+
+    .form-group input::placeholder {
+      color: #BBB;
+    }
+
+    .error-message {
+      color: #E74C3C;
+      background: #FADBD8;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border-left: 4px solid #E74C3C;
+    }
+
+    .success-message {
+      color: #155724;
+      background: #D4EDDA;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border-left: 4px solid #28A745;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: #E8A652;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-login:hover {
+      background: #D39441;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(232, 166, 82, 0.3);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      margin: 28px 0 18px;
+      border-top: 1px solid #EEE;
+    }
+
+    .signup-link {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .signup-link a {
+      color: #D4AF37;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-info {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid #EEE;
+      color: #999;
+      font-size: 12px;
+    }
+
+    .footer-info p {
+      margin-bottom: 8px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <img src="{% static 'images/register-logo.png' %}" alt="Sandy Hotel & Apartment">
+    </div>
+    <h1>ĐĂNG NHẬP</h1>
+    <p class="subtitle">"Chào mừng bạn quay lại Khách sạn Sandy!"</p>
+
+    {% if error %}
+      <div class="error-message">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="{% if message.tags == 'success' %}success-message{% else %}error-message{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          name="username"
+          placeholder="admin@example.com"
+          value="{{ form.username.value|default_if_none:'' }}"
+          required
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Mật khẩu</label>
+        <input
+          type="password"
+          name="password"
+          placeholder="Nhập mật khẩu của bạn!"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn-login">Đăng nhập</button>
+    </form>
+
+    <div class="divider"></div>
+    <div class="signup-link">
+      Bạn chưa có tài khoản?
+      <a href="{% url 'register' %}">Đăng ký ngay</a>
+    </div>
+
+    <div class="footer-info">
+      <p>24/26 An Thương 30, Đà Nẵng</p>
+      <p>0976543722</p>
+      <p>info@sandyhotel.vn</p>
+    </div>
+  </div>
+</body>
+</html>
+
+

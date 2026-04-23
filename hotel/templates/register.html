@@ -1,0 +1,401 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký tài khoản - Sandy Hotel & Apartment</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #FFF8DC 0%, #FFFACD 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .register-container {
+      background: white;
+      border: 3px solid #D4AF37;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 560px;
+      padding: 50px 40px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 30px;
+      background: #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 6px;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+    }
+
+    h1 {
+      color: #D4AF37;
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: #D4AF37;
+      font-size: 16px;
+      font-style: italic;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 16px;
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      color: #D4AF37;
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+
+    .form-group input::placeholder {
+      color: #BBB;
+    }
+
+    .error-summary,
+    .field-error {
+      color: #E74C3C;
+      background: #FADBD8;
+      border-radius: 5px;
+      font-size: 13px;
+    }
+
+    .error-summary {
+      padding: 12px;
+      margin-bottom: 20px;
+      border-left: 4px solid #E74C3C;
+      text-align: left;
+    }
+
+    .field-error {
+      margin-top: 8px;
+      padding: 8px 10px;
+      line-height: 1.5;
+    }
+
+    .field-error.is-hidden {
+      display: none;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 14px;
+      background: #E8A652;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 22px;
+    }
+
+    .btn-register:hover {
+      background: #D39441;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(232, 166, 82, 0.3);
+    }
+
+    .btn-register:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      margin: 28px 0 18px;
+      border-top: 1px solid #EEE;
+    }
+
+    .login-link {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .login-link a {
+      color: #D4AF37;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-info {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid #EEE;
+      color: #999;
+      font-size: 12px;
+    }
+
+    .footer-info p {
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .register-container {
+        padding: 40px 24px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="logo">
+      <img src="{% static 'images/register-logo.png' %}" alt="Sandy Hotel & Apartment">
+    </div>
+    <h1>ĐĂNG KÝ</h1>
+    <p class="subtitle">"Tạo tài khoản để bắt đầu hành trình lưu trú cùng Sandy Hotel!"</p>
+
+    {% if form.non_field_errors %}
+      <div class="error-summary">
+        {% for error in form.non_field_errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" data-register-form>
+      {% csrf_token %}
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Họ tên</label>
+          <input type="text" name="full_name" placeholder="Nguyễn Văn A" value="{{ form.full_name.value|default_if_none:'' }}" minlength="2" maxlength="150" title="Họ tên phải có ít nhất 2 ký tự và không được để trống." required>
+          {% for error in form.full_name.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-group full-width">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="ban@example.com" value="{{ form.email.value|default_if_none:'' }}" maxlength="254" required>
+          {% for error in form.email.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label>Số điện thoại</label>
+          <input type="text" name="phone" placeholder="09xxxxxxxx" value="{{ form.phone.value|default_if_none:'' }}" autocomplete="tel" pattern="0[0-9]{9}" minlength="10" maxlength="10" title="Số điện thoại sai định dạng. Vui lòng nhập đúng 10 chữ số và bắt đầu bằng số 0." data-phone-input required>
+          <div class="field-error is-hidden" data-phone-client-error></div>
+          {% for error in form.phone.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label>Tuổi</label>
+          <input type="number" name="age" min="18" max="100" placeholder="18" value="{{ form.age.value|default_if_none:'' }}" data-age-input>
+          <div class="field-error is-hidden" data-age-client-error></div>
+          {% for error in form.age.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label>Mật khẩu</label>
+          <input type="password" name="password" placeholder="Tối thiểu 8 ký tự" minlength="8" pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}" title="Mật khẩu phải có ít nhất 8 ký tự, gồm ít nhất 1 chữ cái và 1 chữ số." required>
+          <div class="field-error is-hidden" data-password-client-error></div>
+          {% for error in form.password.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-group">
+          <label>Xác nhận mật khẩu</label>
+          <input type="password" name="confirm_password" placeholder="Nhập lại mật khẩu" minlength="8" required>
+          {% for error in form.confirm_password.errors %}
+            <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn-register">Tạo tài khoản</button>
+    </form>
+
+    <div class="divider"></div>
+    <div class="login-link">
+      Bạn đã có tài khoản?
+      <a href="{% url 'login' %}">Đăng nhập</a>
+    </div>
+
+    <div class="footer-info">
+      <p>24/26 An Thương 30, Đà Nẵng</p>
+      <p>0976543722</p>
+      <p>info@sandyhotel.vn</p>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var form = document.querySelector('[data-register-form]');
+      if (!form) {
+        return;
+      }
+
+      var phonePattern = /^0\d{9}$/;
+      var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+      function attachValidation(input, errorElement, getMessage) {
+        if (!input || !errorElement) {
+          return;
+        }
+
+        var touched = false;
+
+        function updateValidity() {
+          var message = getMessage(input.value);
+          input.setCustomValidity(message);
+          return message;
+        }
+
+        function render(forceShow) {
+          var message = updateValidity();
+          var shouldShow = !!message && (forceShow || touched);
+          errorElement.textContent = shouldShow ? message : '';
+          errorElement.classList.toggle('is-hidden', !shouldShow);
+        }
+
+        input.addEventListener('input', function () {
+          touched = true;
+          render(false);
+        });
+
+        input.addEventListener('blur', function () {
+          touched = true;
+          render(true);
+        });
+
+        input.addEventListener('invalid', function () {
+          touched = true;
+          render(true);
+        });
+
+        render(false);
+      }
+
+      attachValidation(
+        form.querySelector('[data-phone-input]'),
+        form.querySelector('[data-phone-client-error]'),
+        function (value) {
+          var normalizedValue = value.trim();
+          if (!normalizedValue) {
+            return 'Vui lòng nhập số điện thoại.';
+          }
+          if (!phonePattern.test(normalizedValue)) {
+            return 'Số điện thoại sai định dạng. Vui lòng nhập đúng 10 chữ số và bắt đầu bằng số 0.';
+          }
+          return '';
+        }
+      );
+
+      attachValidation(
+        form.querySelector('[data-age-input]'),
+        form.querySelector('[data-age-client-error]'),
+        function (value) {
+          var normalizedValue = value.trim();
+          if (!normalizedValue) {
+            return '';
+          }
+          if (!/^\d+$/.test(normalizedValue)) {
+            return 'Tuổi phải là số hợp lệ.';
+          }
+          var age = Number(normalizedValue);
+          if (age < 18) {
+            return 'Tuổi phải từ 18 trở lên.';
+          }
+          if (age > 100) {
+            return 'Tuổi không được vượt quá 100.';
+          }
+          return '';
+        }
+      );
+
+      attachValidation(
+        form.querySelector('input[name="password"]'),
+        form.querySelector('[data-password-client-error]'),
+        function (value) {
+          if (!value) {
+            return 'Vui lòng nhập mật khẩu.';
+          }
+          if (!passwordPattern.test(value)) {
+            return 'Mật khẩu phải có ít nhất 8 ký tự, gồm ít nhất 1 chữ cái và 1 chữ số.';
+          }
+          return '';
+        }
+      );
+    })();
+  </script>
+</body>
+</html>

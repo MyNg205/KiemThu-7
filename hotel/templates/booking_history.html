@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Lịch sử đặt phòng - Sandy Hotel & Apartment{% endblock %}
+
+{% block extra_css %}
+<style>
+  .booking-container {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .section-title {
+    background: #FFFACD;
+    border-left: 5px solid #D4AF37;
+    padding: 15px 20px;
+    margin: -30px -30px 20px -30px;
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+  }
+
+  .booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    border: 3px solid #8B5CF6;
+  }
+
+  .booking-table thead {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  }
+
+  .booking-table th {
+    padding: 15px;
+    color: white;
+    text-align: left;
+    font-weight: 600;
+    border: 2px solid #8B5CF6;
+  }
+
+  .booking-table td {
+    padding: 12px 15px;
+    border: 1px solid #DDD;
+    color: #333;
+    font-size: 14px;
+  }
+
+  .booking-table tbody tr:hover {
+    background: #F9F9F9;
+  }
+
+  .status-đã-đặt {
+    color: #27AE60;
+    font-weight: 600;
+  }
+
+  .status-đã-check-in {
+    color: #3498DB;
+    font-weight: 600;
+  }
+
+  .status-đã-huỷ {
+    color: #E74C3C;
+    font-weight: 600;
+  }
+
+  .action-btn {
+    background: #E74C3C;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .action-btn:hover {
+    background: #C0392B;
+  }
+
+  .action-btn:disabled {
+    background: #CCC;
+    cursor: not-allowed;
+  }
+
+  .no-bookings {
+    text-align: center;
+    color: #999;
+    padding: 40px;
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  .no-bookings a {
+    color: #D4AF37;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .no-bookings a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .booking-table {
+      font-size: 12px;
+    }
+
+    .booking-table th,
+    .booking-table td {
+      padding: 10px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+  <div class="section-title">Lịch sử đặt phòng</div>
+
+  {% if bookings %}
+    <table class="booking-table">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Phòng</th>
+          <th>Loại</th>
+          <th>Check-in</th>
+          <th>Check-out</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in bookings %}
+          <tr>
+            <td>{{ booking.id }}</td>
+            <td>Phòng {{ booking.room.room_number }}</td>
+            <td>{{ booking.room.room_type.name }}</td>
+            <td>{{ booking.check_in|date:"d-m-Y" }}</td>
+            <td>{{ booking.check_out|date:"d-m-Y" }}</td>
+            <td>
+              {% if booking.status == 'Đã đặt' %}
+                <span class="status-đã-đặt">{{ booking.status }}</span>
+              {% elif booking.status == 'Đã check in' %}
+                <span class="status-đã-check-in">{{ booking.status }}</span>
+              {% else %}
+                <span class="status-đã-huỷ">{{ booking.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if booking.status == 'Đã đặt' %}
+                <a href="/cancel-booking/{{ booking.id }}/" class="action-btn">🗑️ Hủy</a>
+              {% else %}
+                <span style="color: #CCC;">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="no-bookings">
+      📭 Bạn chưa có đặt phòng nào. <br><br>
+      <a href="/">👈 Bắt đầu đặt phòng</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

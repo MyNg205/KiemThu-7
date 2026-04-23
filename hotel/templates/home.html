@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% load price_filters %}
+
+{% block title %}Trang chủ - Sandy Hotel & Apartment{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-title {
+    background: white;
+    border-left: 5px solid #D4AF37;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .subtitle {
+    color: #D4AF37;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .subtitle-desc {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 25px;
+    line-height: 1.6;
+  }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+
+  .room-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+
+  .room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .room-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #EEE;
+  }
+
+  .room-info {
+    padding: 15px;
+  }
+
+  .room-type {
+    color: #D4AF37;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .room-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .room-price {
+    color: #E8A652;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .room-price-unit {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+  }
+
+  .room-btn {
+    width: 100%;
+    padding: 10px;
+    background: #E8A652;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+  }
+
+  .room-btn:hover {
+    background: #D39441;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+  🏨 Bắt đầu hành trình nghỉ dưỡng của bạn tại những lựa chọn hoàn hảo tại Sandy Hotel & Apartment
+</div>
+
+<div class="subtitle-desc">
+  Xem chi tiết các hạng phòng tên đuồi và bắt đầu đặt phòng theo yêu cầu của bạn.
+</div>
+
+<div class="subtitle">Danh sách phòng có sẵn</div>
+
+<div class="rooms-grid">
+  {% for room_type in room_types %}
+    <div class="room-card">
+      <img src="{{ room_type.image }}" alt="{{ room_type.name }}" class="room-image">
+      <div class="room-info">
+        <div class="room-type">{{ room_type.name|upper }}</div>
+        <div class="room-name">{{ room_type.name }}</div>
+        <div class="room-price">
+          {{ room_type.base_price|format_price }} VND<span class="room-price-unit">/đêm</span>
+        </div>
+        <div style="font-size:13px;color:#444;margin-bottom:6px;">Số giường: {{ room_type.bed_count }} | Sức chứa: {{ room_type.capacity }} người</div>
+        <a href="/room-type/{{ room_type.id }}/" class="room-btn">Xem Chi Tiết</a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
